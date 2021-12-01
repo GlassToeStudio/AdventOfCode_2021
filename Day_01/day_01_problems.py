@@ -153,7 +153,7 @@ def sum_of_three(depths: list[int]) -> list[int]:
     Returns:
         list[int]: list of three-window sums
     """
-    return [sum(depths[x:x+3])for x in range(len(depths))]
+    return [sum(depths[x:x+3])for x in range(len(depths[:-2]))]
 
 
 if __name__ == "__main__":
