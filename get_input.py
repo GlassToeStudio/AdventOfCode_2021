@@ -182,7 +182,7 @@ def make_python_file(day: str, file: str, instructions: str) -> None:
 
 if __name__ == "__main__":
     args = get_args()
-    url = f"https://adventofcode.com/2020/day/{args.day}"
+    url = f"https://adventofcode.com/2021/day/{args.day}"
     id = get_session_id()
     data = get_input_data(url, id)
     instruction_data = get_instruction_data(url, id)
