@@ -18,6 +18,8 @@ def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--day", help="Enter the day for which you want the input file.", required=True)  # noqa: E501
     parser.add_argument("-f", "--file", help="Enter the name to save the input file.", default='input')  # noqa: E501
+    parser.add_argument("-i", "--input", help="Create the input file", choices=('true', 'false'), default='true')  # noqa: E501
+    parser.add_argument("-p", "--python", help="Create the python file", choices=('true', 'false'), default='true')  # noqa: E501
     return parser.parse_args()
 
 
@@ -75,6 +77,8 @@ def format_instruction_text(html_text: str) -> str:
     Returns:
         str: pep8 formatted set of instruction text
     """
+
+    html_text = html_text.replace('--- Part Two ---', '\n--- Part Two ---\n')
 
     # Save the text and format it.
     # Not sure why it differs so much after saving and reading
@@ -186,13 +190,8 @@ def make_python_file(day: str, file: str, instructions: str) -> None:
             python_file.write(output)
     else:
         with open(f"Day_{day}/day_{day}_problems.py", 'w') as python_file:
-            output = (f"\"\"\"\n{instructions}\"\"\"\n\n"
-                      f"def format_data(data):\n"
-                      f"    return [x.strip() for x in data.readlines()]\n\n\n"
-                      f"if __name__ == \"__main__\":\n"
-                      f"    with open(\"Day_{day}/{file}.txt\", \"r\") as in_file:\n"  # noqa: E501
-                      f"        data = format_data(in_file)\n"
-                      f"        print(data)\n")
+            with open('py_template.txt', 'r') as template:
+                output = template.read().replace('{day}', day).replace('{file}', file).replace('{instructions}', instructions)  # noqa E501
             python_file.write(output)
 
 
@@ -200,10 +199,14 @@ if __name__ == "__main__":
     args = get_args()
     url = f"https://adventofcode.com/2021/day/{args.day}"
     id = get_session_id()
-    data = get_input_data(url, id)
-    instruction_data = get_instruction_data(url, id)
-    instructions = format_instruction_text(instruction_data)
+
     day = fix_day(args.day)
     try_make_dir(day)
-    make_input_file(day, args.file, data)
-    make_python_file(day, args.file, instructions)
+
+    if args.input == 'true':
+        input_data = get_input_data(url, id)
+        make_input_file(day, args.file, input_data)
+    if args.python == 'true':
+        instruction_data = get_instruction_data(url, id)
+        instructions = format_instruction_text(instruction_data)
+        make_python_file(day, args.file, instructions)

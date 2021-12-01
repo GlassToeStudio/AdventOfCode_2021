@@ -1,0 +1,13 @@
+"""
+{instructions}
+"""
+
+
+def format_data(data):
+    return [x.strip() for x in data.readlines()]
+
+
+if __name__ == "__main__":
+    with open("Day_{day}/{file}.txt", "r") as in_file:
+        data = format_data(in_file)
+        print(data)
