@@ -131,18 +131,18 @@ def try_make_dir(day: str) -> None:
     """Try to make a new directory for the given day.\n
     ./Day_01,\n
     ./Day_21,\n
-    etc.
+    etc.\n
+    If it exists, just print to console.
 
     Args:
         day (str): 01, 21, etc.
 
-    Throws an error if the directory exists.
     """
 
-    try:
+    if os.path.isdir(f"Day_{day}"):
+        print(f"{RED}Directory exists.{END}")
+    else:
         os.mkdir(f"Day_{day}")
-    except OSError as error:
-        print(f"{RED}{error}{END}")
 
 
 def make_input_file(day: str, file: str, data: list[str]) -> None:
@@ -154,6 +154,9 @@ def make_input_file(day: str, file: str, data: list[str]) -> None:
         file (str): file name to save as
         data (list[str]): the data to save to file
     """
+    if os.path.exists(f"Day_{day}/day_{day}_problems.py"):
+        print(f"{RED}input file exists.{END}")
+        return
 
     with open(f"Day_{day}/{file}.txt", 'w') as input_file:
         input_file.write(data)
@@ -161,7 +164,9 @@ def make_input_file(day: str, file: str, data: list[str]) -> None:
 
 def make_python_file(day: str, file: str, instructions: str) -> None:
     """Save the instruction string to a python file for the given
-    day in its correespsonding directory.
+    day in its correespsonding directory. If the file exists, just
+    overwrite the previous instructions with new instructions that
+    include part 2.
 
     Args:
         day (str): 01, 21, etc.
@@ -169,15 +174,26 @@ def make_python_file(day: str, file: str, instructions: str) -> None:
         instructions (str): instructions to be added adt the top of python file
     """
 
-    with open(f"Day_{day}/day_{day}_problems.py", 'w') as python_file:
-        output = (f"\"\"\"\n{instructions}\"\"\"\n\n\n"
-                  f"def format_data(data):\n"
-                  f"    return [x.strip() for x in data.readlines()]\n\n\n"
-                  f"if __name__ == \"__main__\":\n"
-                  f"    with open(\"Day_{day}/{file}.txt\", \"r\") as in_file:\n"  # noqa: E501
-                  f"        data = format_data(in_file)\n"
-                  f"        print(data)\n")
-        python_file.write(output)
+    # If we already made the file, just overwrite the instructions,
+    # keep the code we already wrote.
+    if os.path.exists(f"Day_{day}/day_{day}_problems.py"):
+        with open(f"Day_{day}/day_{day}_problems.py", 'r+') as python_file:
+            data = python_file.read()
+            s = data.split('\"\"\"', 2)
+            output = (f"\"\"\"\n{instructions}\"\"\"{''.join(s[2:])}")
+            python_file.seek(0)
+            python_file.truncate(0)
+            python_file.write(output)
+    else:
+        with open(f"Day_{day}/day_{day}_problems.py", 'w') as python_file:
+            output = (f"\"\"\"\n{instructions}\"\"\"\n\n"
+                      f"def format_data(data):\n"
+                      f"    return [x.strip() for x in data.readlines()]\n\n\n"
+                      f"if __name__ == \"__main__\":\n"
+                      f"    with open(\"Day_{day}/{file}.txt\", \"r\") as in_file:\n"  # noqa: E501
+                      f"        data = format_data(in_file)\n"
+                      f"        print(data)\n")
+            python_file.write(output)
 
 
 if __name__ == "__main__":
