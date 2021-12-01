@@ -9,7 +9,11 @@ from colors import END, RED
 
 
 def get_args() -> argparse.Namespace:
-    """Setup arg parser and return optional and required args."""
+    """Setup arg parser and return optional and required args.
+
+    Returns:
+        argparse.Namespace: args
+    """
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--day", help="Enter the day for which you want the input file.", required=True)  # noqa: E501
@@ -18,14 +22,26 @@ def get_args() -> argparse.Namespace:
 
 
 def get_session_id() -> str:
-    """Get the session ID from the .env file."""
+    """Get the session ID from the .env file.
+
+    Returns:
+        str: session id for loggged in user
+    """
 
     load_dotenv()
     return os.getenv("SESSION_ID")
 
 
 def get_input_data(url: str, ID: str) -> list[str]:
-    """Get the input data for the given url (day of advent of code)"""
+    """Get the input data for the given url (day of advent of code)
+
+    Args:
+        url (str): url of the advent of code problem for a specific day
+        ID (str): session id for logged in user
+
+    Returns:
+        list[str]: the input for a given advent of code problem
+    """
 
     cookies = {'session': ID, }
     res = requests.get(f"{url}/input", cookies=cookies)
@@ -35,7 +51,15 @@ def get_input_data(url: str, ID: str) -> list[str]:
 
 
 def get_instruction_data(url: str, ID: str) -> str:
-    """Get the instruction text from the given url (day of advent of code)"""
+    """Get the instruction text from the given url (day of advent of code)
+
+    Args:
+        url (str): url of the advent of code problem for a specific day
+        ID (str): session id for logged in user
+
+    Returns:
+        str: html text from the given url
+    """
 
     cookies = {'session': ID, }
     res = requests.get(f"{url}", cookies=cookies).text
@@ -43,7 +67,14 @@ def get_instruction_data(url: str, ID: str) -> str:
 
 
 def format_instruction_text(html_text: str) -> str:
-    """Get a pep8 formatted version of the given html_text."""
+    """Get a pep8 formatted version of the given html_text.
+
+    Args:
+        html_text (str): all text from html object
+
+    Returns:
+        str: pep8 formatted set of instruction text
+    """
 
     # Save the text and format it.
     # Not sure why it differs so much after saving and reading
@@ -83,40 +114,61 @@ def format_instruction_text(html_text: str) -> str:
     return "".join(instructions)
 
 
-def try_make_dir(day) -> None:
-    """Try to make a new directory for the given day.
-        Throws an error if the directory exists.
+def fix_day(day: str) -> str:
+    """Append a zero [0] in front of day if day is one digit.
+
+    Args:
+        day (str): 1, 21, etc.
+
+    Returns:
+        str: 01, 21, etc.
     """
 
-    day = fix_day(day)
+    return f"0{day}" if len(day) == 1 else day
+
+
+def try_make_dir(day: str) -> None:
+    """Try to make a new directory for the given day.\n
+    ./Day_01,\n
+    ./Day_21,\n
+    etc.
+
+    Args:
+        day (str): 01, 21, etc.
+
+    Throws an error if the directory exists.
+    """
+
     try:
         os.mkdir(f"Day_{day}")
     except OSError as error:
         print(f"{RED}{error}{END}")
 
 
-def fix_day(day: str) -> str:
-    """Append a 0 in front of day if day is one digit."""
-
-    return f"0{day}" if len(day) == 1 else day
-
-
 def make_input_file(day: str, file: str, data: list[str]) -> None:
     """Save the input data to a file for the given day in its
-        correespsonding directory.
+    correspsonding directory.
+
+    Args:
+        day (str): 01, 21, etc.
+        file (str): file name to save as
+        data (list[str]): the data to save to file
     """
 
-    day = fix_day(day)
     with open(f"Day_{day}/{file}.txt", 'w') as input_file:
         input_file.write(data)
 
 
 def make_python_file(day: str, file: str, instructions: str) -> None:
-    """Save the instruction string to a python file for the given 
-        day in its correespsonding directory.
+    """Save the instruction string to a python file for the given
+    day in its correespsonding directory.
+
+    Args:
+        day (str): 01, 21, etc.
+        file (str): file name to pass into generated python code
+        instructions (str): instructions to be added adt the top of python file
     """
 
-    day = fix_day(day)
     with open(f"Day_{day}/day_{day}_problems.py", 'w') as python_file:  # noqa: E501
         output = (f"\"\"\"\n{instructions}\"\"\"\n\n\n"
                   f"def format_data(data):\n"
@@ -131,12 +183,11 @@ def make_python_file(day: str, file: str, instructions: str) -> None:
 if __name__ == "__main__":
     args = get_args()
     url = f"https://adventofcode.com/2020/day/{args.day}"
-    ID = get_session_id()
-
-    data = get_input_data(url, ID)
-    instruction_data = get_instruction_data(url, ID)
+    id = get_session_id()
+    data = get_input_data(url, id)
+    instruction_data = get_instruction_data(url, id)
     instructions = format_instruction_text(instruction_data)
-
-    try_make_dir(args.day)
-    make_input_file(args.day, args.file, data)
-    make_python_file(args.day, args.file, instructions)
+    day = fix_day(args.day)
+    try_make_dir(day)
+    make_input_file(day, args.file, data)
+    make_python_file(day, args.file, instructions)
