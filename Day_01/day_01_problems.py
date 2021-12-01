@@ -135,7 +135,7 @@ def count_increaases(depths: list[int]) -> int:
     Returns:
         int: total increases in depth
     """
-    return sum([1 if depths[x] > depths[x-1] else 0 for x in range(1, len(depths))])  # noqa E501
+    return sum(depths[x] > depths[x-1] for x in range(1, len(depths)))
 
 
 def sum_of_three(depths: list[int]) -> list[int]:
