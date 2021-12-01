@@ -169,7 +169,7 @@ def make_python_file(day: str, file: str, instructions: str) -> None:
         instructions (str): instructions to be added adt the top of python file
     """
 
-    with open(f"Day_{day}/day_{day}_problems.py", 'w') as python_file:  # noqa: E501
+    with open(f"Day_{day}/day_{day}_problems.py", 'w') as python_file:
         output = (f"\"\"\"\n{instructions}\"\"\"\n\n\n"
                   f"def format_data(data):\n"
                   f"    return [x.strip() for x in data.readlines()]\n\n\n"
