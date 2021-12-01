@@ -1,11 +1,12 @@
 import argparse
 import os
+import re
 
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
-from colors import END, RED
+from colors import BLUE, END, RED
 
 
 def get_args() -> argparse.Namespace:
@@ -15,11 +16,22 @@ def get_args() -> argparse.Namespace:
         argparse.Namespace: args
     """
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--day", help="Enter the day for which you want the input file.", required=True)  # noqa: E501
-    parser.add_argument("-f", "--file", help="Enter the name to save the input file.", default='input')  # noqa: E501
-    parser.add_argument("-i", "--input", help="Create the input file", choices=('true', 'false'), default='true')  # noqa: E501
-    parser.add_argument("-p", "--python", help="Create the python file", choices=('true', 'false'), default='true')  # noqa: E501
+    parser = argparse.ArgumentParser(
+        f"\n{BLUE}"
+        "********************************************************************************\n"  # noqa: E501
+        "********************************************************************************\n"  # noqa: E501
+        "**                                                                            **\n"  # noqa: E501
+        "**  Will get the input file and create a boilerplate python file for a given  **\n"  # noqa: E501
+        "**                           Advent of Code problem.                          **\n"  # noqa: E501
+        "**                                                                            **\n"  # noqa: E501
+        "********************************************************************************\n"  # noqa: E501
+        "********************************************************************************\n"  # noqa: E501
+        f"{END}")
+
+    parser.add_argument("day", help="Enter the day for the probelm you are working on.")  # noqa: E501
+    parser.add_argument("-f", "--file", help="Enter the name to save the input file (default: 'input').", default='input')  # noqa: E501
+    parser.add_argument("-i", "--input", help="Create the input file.", action='store_true')  # noqa: E501
+    parser.add_argument("-p", "--python", help="Create the python template.", action='store_true')  # noqa: E501
     return parser.parse_args()
 
 
@@ -65,7 +77,8 @@ def get_instruction_data(url: str, ID: str) -> str:
 
     cookies = {'session': ID, }
     res = requests.get(f"{url}", cookies=cookies).text
-    return BeautifulSoup(res, 'html.parser').get_text()
+    html_text = BeautifulSoup(res, 'html.parser').get_text()
+    return html_text
 
 
 def format_instruction_text(html_text: str) -> str:
@@ -78,8 +91,6 @@ def format_instruction_text(html_text: str) -> str:
         str: pep8 formatted set of instruction text
     """
 
-    html_text = html_text.replace('--- Part Two ---', '\n--- Part Two ---\n')
-
     # Save the text and format it.
     # Not sure why it differs so much after saving and reading
     # back from a file versus just doing html_text.split('\n')[18:-11]
@@ -87,15 +98,15 @@ def format_instruction_text(html_text: str) -> str:
         MAX_LINE_LENGTH = 79
         instructions = []
 
+        r = r'([-]{3}[\s]{1}([\s\w:]*)[\s]{1}[-]{3})'
+        regex = re.compile(r)
+        match = regex.findall(html_text)
+        for m in match:
+            html_text = html_text.replace(m[0], f'\n\n--- {m[1]} ---\n')
+
         f.write(html_text)
         f.seek(0)  # back to the beginning.
         lines = f.readlines()[18:-11]  # Cut out the junk.
-
-        # All this just to get the title in the right spot
-        t = lines.pop(0).split('---')
-        t[1] = f'--- {t[1]} ---\n'
-        lines.insert(0, t[1])
-        lines.insert(1, t[2])
 
         # Break the lines up such that they are never longer
         # than MAX_LINE_LENGTH, for pep8
@@ -181,6 +192,7 @@ def make_python_file(day: str, file: str, instructions: str) -> None:
     # If we already made the file, just overwrite the instructions,
     # keep the code we already wrote.
     if os.path.exists(f"Day_{day}/day_{day}_problems.py"):
+        print(f"{RED}python file exists, editing current file.{END}")
         with open(f"Day_{day}/day_{day}_problems.py", 'r+') as python_file:
             data = python_file.read()
             s = data.split('\"\"\"', 2)
@@ -197,16 +209,16 @@ def make_python_file(day: str, file: str, instructions: str) -> None:
 
 if __name__ == "__main__":
     args = get_args()
-    url = f"https://adventofcode.com/2021/day/{args.day}"
+    url = f"https://adventofcode.com/2020/day/{args.day}"
     id = get_session_id()
 
     day = fix_day(args.day)
     try_make_dir(day)
 
-    if args.input == 'true':
+    if args.input:
         input_data = get_input_data(url, id)
         make_input_file(day, args.file, input_data)
-    if args.python == 'true':
+    if args.python:
         instruction_data = get_instruction_data(url, id)
         instructions = format_instruction_text(instruction_data)
         make_python_file(day, args.file, instructions)
