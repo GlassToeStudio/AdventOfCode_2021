@@ -85,26 +85,26 @@ you get if you multiply your final horizontal position by your final depth?
 
 """
 
-
 from io import TextIOWrapper
+from typing import Union
 
 
-def format_data(data: TextIOWrapper) -> list[list[str, int]]:
+def format_data(data: TextIOWrapper) -> list[list[Union[str, int]]]:
     """Return a list of ints from the given text."
 
     Args:
         data (TextIOWrapper): text file
 
     Returns:
-        list[list[str, int]] formatted data
+        list[list[str | int]] formatted data
     """
     return [[x.strip()[0], int(x.strip()[-1])] for x in data.readlines()]
 
 
 def calculate_position(course):
-    h = sum(x[1] if x[0] == 'f' else 0 for x in course)
-    d = sum(x[1] if x[0] == 'd' else 0 for x in course)
-    d -= sum(x[1] if x[0] == 'u' else 0 for x in course)
+    h = sum(x[1] for x in course if x[0] == 'f')
+    d = sum(x[1] for x in course if x[0] == 'd')
+    d -= sum(x[1] for x in course if x[0] == 'u')
     return h * d
 
 
