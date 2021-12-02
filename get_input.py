@@ -102,9 +102,9 @@ def format_instruction_text(html_text: str) -> str:
         # '--- message ---'
         # 'message'
         # [-]{3}[\s]{1} '--- '
-        # ([\s\w:]*) 'any characters, whitespace, and colon' as a group
+        # ([\s\w:!]*) 'any characters, whitespace, and colon, exlmation' as a group
         # [\s]{1}[-]{3} ' ---'
-        r = r'([-]{3}[\s]{1}([\s\w:]*)[\s]{1}[-]{3})'
+        r = r'([-]{3}[\s]{1}([\s\w:!]*)[\s]{1}[-]{3})'
         regex = re.compile(r)
         match = regex.findall(html_text)
         for m in match:
