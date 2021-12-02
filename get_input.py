@@ -98,12 +98,20 @@ def format_instruction_text(html_text: str) -> str:
         MAX_LINE_LENGTH = 79
         instructions = []
 
+        # Checks for '--- message ---' and keeps a match of the inner text
+        # '--- message ---'
+        # 'message'
+        # [-]{3}[\s]{1} '--- '
+        # ([\s\w:]*) 'any characters, whitespace, and colon' as a group
+        # [\s]{1}[-]{3} ' ---'
         r = r'([-]{3}[\s]{1}([\s\w:]*)[\s]{1}[-]{3})'
         regex = re.compile(r)
         match = regex.findall(html_text)
         for m in match:
             html_text = html_text.replace(m[0], f'\n\n--- {m[1]} ---\n')
 
+        # TODO: Prefer to format the html_text directly and not
+        # write to, and read back from, a file.
         f.write(html_text)
         f.seek(0)  # back to the beginning.
         lines = f.readlines()[18:-11]  # Cut out the junk.
@@ -113,7 +121,7 @@ def format_instruction_text(html_text: str) -> str:
         for line in lines:
             start = 0
             end = MAX_LINE_LENGTH
-            if end > len(line):
+            if MAX_LINE_LENGTH > len(line):
                 instructions.append(line)
                 continue
             while end < len(line):
@@ -122,15 +130,16 @@ def format_instruction_text(html_text: str) -> str:
                 instructions.append(line[start:end] + '\n')
                 start = end + 1
                 end += MAX_LINE_LENGTH
-                if(end > len(line)):
-                    instructions.append(line[start:]+'\n')
+                if end > len(line):
+                    instructions.append(line[start:] + '\n')
 
     os.remove('temp')
     return "".join(instructions)
 
 
 def fix_day(day: str) -> str:
-    """Append a zero [0] in front of day if day is one digit.
+    """Append a zero [0] in front of day if day is one digit.\n
+    1 -> 01
 
     Args:
         day (str): 1, 21, etc.
@@ -151,11 +160,10 @@ def try_make_dir(day: str) -> None:
 
     Args:
         day (str): 01, 21, etc.
-
     """
 
     if os.path.isdir(f"Day_{day}"):
-        print(f"{RED}Directory exists.{END}")
+        print(f"{RED}directory exists.{END}")
     else:
         os.mkdir(f"Day_{day}")
 
@@ -169,6 +177,7 @@ def make_input_file(day: str, file: str, data: list[str]) -> None:
         file (str): file name to save as
         data (list[str]): the data to save to file
     """
+
     if os.path.exists(f"Day_{day}/{file}.txt"):
         print(f"{RED}input file exists.{END}")
         return
