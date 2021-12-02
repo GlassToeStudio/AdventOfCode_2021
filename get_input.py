@@ -169,7 +169,7 @@ def make_input_file(day: str, file: str, data: list[str]) -> None:
         file (str): file name to save as
         data (list[str]): the data to save to file
     """
-    if os.path.exists(f"Day_{day}/day_{day}_problems.py"):
+    if os.path.exists(f"Day_{day}/{file}.txt"):
         print(f"{RED}input file exists.{END}")
         return
 
