@@ -26,3 +26,29 @@ Count how many increases in depth there are.
 Take the sum of every three consecutive depths and then count the increases in the sums.
 </p>
 </details>
+
+
+
+<details>
+<summary><b>Day 2: Dive!</b></summary>
+<p>
+From a list of directions and amounts (course), calculate the
+depth and distance traveled.
+
+```
+forward 5
+down 5
+forward 8
+up 3
+down 8
+forward 2
+```
+
+### Part 1:
+Calculate the product of the final depth and distance.
+
+### Part 2:
+Calculate depth by using an aiming factor based on distance.
+Calculate the product of the final depth and distance.
+</p>
+</details>
