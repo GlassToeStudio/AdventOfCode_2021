@@ -102,59 +102,36 @@ def format_data(data: TextIOWrapper) -> list[tuple[str, int]]:
     return [(x[0], int(x.strip()[-1])) for x in data.readlines()]
 
 
-def positional_product(course: list[tuple[str, int]]) -> int:
+def positional_products(course: list[tuple[str, int]]) -> tuple[int, int]:  # noqa E501
     """Return the product of distance * depth based on the
-    given course info.
+    given course info, and the same product but accounting for aim.
 
     Args:
         course (list[tuple[str, int]]): Course instructions (direction, amount)
 
     Returns:
-        int: product of final distance and depth
+        tuple[int, int] product of final distance and depth and with aim
     """
 
-    distance = depth = 0
+    distance = depth = depth_aim = 0
     funcs = {
-        'f': lambda amt, distance, depth: (distance + amt, depth),
-        'd': lambda amt, distance, depth: (distance, depth + amt),
-        'u': lambda amt, distance, depth: (distance, depth - amt)
-    }
-
-    for dir, amt in course:
-        distance, depth = funcs[dir](amt, distance, depth)
-
-    return distance * depth
-
-
-def aimed_positional_product(course: list[tuple[str, int]]) -> int:
-    """Return the product of distance * depth based on the
-    given course info, accounting for aim.
-
-    Args:
-        course (list[tuple[str, int]]): Course instructions (direction, amount)
-
-    Returns:
-        int: product of final distance and depth
-    """
-
-    distance = depth = aim = 0
-    funcs = {
-        'f': lambda amt, distance, depth, aim: (distance + amt, depth + (aim * amt), aim),  # noqa E501
-        'd': lambda amt, distance, depth, aim: (distance, depth, aim + amt),
-        'u': lambda amt, distance, depth, aim: (distance, depth, aim - amt)
+        'f': lambda amt, distance, depth, depth_aim: (distance + amt, depth + (depth_aim * amt), depth_aim),  # noqa E501
+        'd': lambda amt, distance, depth, depth_aim: (distance, depth, depth_aim + amt),  # noqa E501
+        'u': lambda amt, distance, depth, depth_aim: (distance, depth, depth_aim - amt)  # noqa E501
     }
     for dir, amt in course:
-        distance, depth, aim = funcs[dir](amt, distance, depth, aim)
+        distance, depth, depth_aim = funcs[dir](amt, distance, depth, depth_aim)  # noqa E501
 
-    return distance * depth
+    return distance * depth_aim, distance * depth
 
 
 if __name__ == "__main__":
     with open("Day_02/input.txt", "r") as in_file:
         data = format_data(in_file)
 
-    print(f'Part 1: {positional_product(data)}')
-    print(f'Part 2: {aimed_positional_product(data)}')
+    p1, p2 = positional_products(data)
+    print(f'Part 1: {p1}')
+    print(f'Part 2: {p2}')
 
 # Part 1:    2215080
 # Part 2: 1864715580
