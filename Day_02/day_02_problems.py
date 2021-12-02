@@ -9,8 +9,8 @@ forward X increases the horizontal position by X units.
 down X increases the depth by X units.
 up X decreases the depth by X units.
 
-Note that since you're on a submarine, down and up affect your depth, and so
-they have the opposite result of what you might expect.
+Note that since you're on a submarine, down and up affect your deptheight, and
+so they have the opposite result of what you might expect.
 
 The submarine seems to already have a planned course (your puzzle input). You
 should probably figure out where it's going. For example:
@@ -27,10 +27,10 @@ modify them as follows:
 
 
 forward 5 adds 5 to your horizontal position, a total of 5.
-down 5 adds 5 to your depth, resulting in a value of 5.
+down 5 adds 5 to your deptheight, resulting in a value of 5.
 forward 8 adds 8 to your horizontal position, a total of 13.
 up 3 decreases your depth by 3, resulting in a value of 2.
-down 8 adds 8 to your depth, resulting in a value of 10.
+down 8 adds 8 to your deptheight, resulting in a value of 10.
 forward 2 adds 2 to your horizontal position, a total of 15.
 
 After following these instructions, you would have a horizontal position of 15
@@ -46,9 +46,9 @@ Based on your calculations, the planned course doesn't seem to make any sense.
 You find the submarine manual and discover that the process is actually
 slightly more complicated.
 
-In addition to horizontal position and depth, you'll also need to track a third
-value, aim, which also starts at 0. The commands also mean something entirely
-different than you first thought:
+In addition to horizontal position and deptheight, you'll also need to track a
+third value, aim, which also starts at 0. The commands also mean something
+entirely different than you first thought:
 
 
 down X increases your aim by X units.
@@ -101,7 +101,7 @@ def format_data(data: TextIOWrapper) -> list[tuple[str, int]]:
     return [(x[0], int(x.strip()[-1])) for x in data.readlines()]
 
 
-def calculate_position(course: list[tuple[str, int]]) -> int:
+def positional_product(course: list[tuple[str, int]]) -> int:
     """Return the product of height * depth based on the
     given course info.
 
@@ -112,19 +112,20 @@ def calculate_position(course: list[tuple[str, int]]) -> int:
         int: product of final height and depth
     """
 
-    h = d = 0
+    height = depth = 0
     funcs = {
-        'f': lambda c, h, d: (h + c, d),
-        'd': lambda c, h, d: (h, d + c),
-        'u': lambda c, h, d: (h, d - c)
+        'f': lambda amt, height, depth: (height + amt, depth),
+        'd': lambda amt, height, depth: (height, depth + amt),
+        'u': lambda amt, height, depth: (height, depth - amt)
     }
 
-    for c in course:
-        h, d = funcs[c[0]](c[1], h, d)
-    return h * d
+    for dir, amt in course:
+        height, depth = funcs[dir](amt, height, depth)
+
+    return height * depth
 
 
-def calculate_position_with_aim(course: list[tuple[str, int]]) -> int:
+def aimed_positional_product(course: list[tuple[str, int]]) -> int:
     """Return the product of height * depth based on the
     given course info, accounting for aim.
 
@@ -135,22 +136,24 @@ def calculate_position_with_aim(course: list[tuple[str, int]]) -> int:
         int: product of final height and depth
     """
 
-    h = d = a = 0
+    height = depth = aim = 0
     funcs = {
-        'f': lambda c, h, d, a: (h + c, d + (a * c), a),
-        'd': lambda c, h, d, a: (h, d, a + c),
-        'u': lambda c, h, d, a: (h, d, a - c)
+        'f': lambda amt, height, depth, aim: (height + amt, depth + (aim * amt), aim),  # noqa E501
+        'd': lambda amt, height, depth, aim: (height, depth, aim + amt),
+        'u': lambda amt, height, depth, aim: (height, depth, aim - amt)
     }
-    for c in course:
-        h, d, a = funcs[c[0]](c[1], h, d, a)
-    return h * d
+    for dir, amt in course:
+        height, depth, aim = funcs[dir](amt, height, depth, aim)
+
+    return height * depth
 
 
 if __name__ == "__main__":
     with open("Day_02/input.txt", "r") as in_file:
         data = format_data(in_file)
-        print(f'Part 1: {calculate_position(data)}')
-        print(f'Part 2: {calculate_position_with_aim(data)}')
+
+    print(f'Part 1: {positional_product(data)}')
+    print(f'Part 2: {aimed_positional_product(data)}')
 
 # Part 1:    2215080
 # Part 2: 1864715580
