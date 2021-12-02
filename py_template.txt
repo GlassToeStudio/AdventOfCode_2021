@@ -3,7 +3,18 @@
 """
 
 
-def format_data(data):
+from io import TextIOWrapper
+
+
+def format_data(data: TextIOWrapper) -> list[str]:
+    """Return a list of ints from the given text."
+
+    Args:
+        data (TextIOWrapper): text file
+
+    Returns:
+        list[str]: input data as list[str]
+    """
     return [x.strip() for x in data.readlines()]
 
 
