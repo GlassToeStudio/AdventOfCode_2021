@@ -86,29 +86,49 @@ you get if you multiply your final horizontal position by your final depth?
 """
 
 from io import TextIOWrapper
-from typing import Union
 
 
-def format_data(data: TextIOWrapper) -> list[list[Union[str, int]]]:
-    """Return a list of ints from the given text."
+def format_data(data: TextIOWrapper) -> list[tuple[str, int]]:
+    """Return a list of (str, int) from the given text."
 
     Args:
         data (TextIOWrapper): text file
 
     Returns:
-        list[list[str | int]] formatted data
+        list[tuple[str, int]] formatted data
     """
-    return [[x.strip()[0], int(x.strip()[-1])] for x in data.readlines()]
+
+    return [(x.strip()[0], int(x.strip()[-1])) for x in data.readlines()]
 
 
-def calculate_position(course):
-    h = sum(x[1] for x in course if x[0] == 'f')
-    d = sum(x[1] for x in course if x[0] == 'd')
-    d -= sum(x[1] for x in course if x[0] == 'u')
+def calculate_position(course: list[tuple[str, int]]) -> int:
+    """Return the product of height * depth based on the
+    given course info.
+
+    Args:
+        course (list[tuple[str, int]]): Course instructions (direction, amount)
+
+    Returns:
+        int: product of final height and depth
+    """
+
+    h = sum(c[1] for c in course if c[0] == 'f')
+    d = sum(c[1] for c in course if c[0] == 'd')
+    d -= sum(c[1] for c in course if c[0] == 'u')
     return h * d
 
 
-def calculate_position_with_aim(course):
+def calculate_position_with_aim(course: list[tuple[str, int]]) -> int:
+    """Return the product of height * depth based on the
+    given course info, accounting for aim.
+
+    Args:
+        course (list[tuple[str, int]]): Course instructions (direction, amount)
+
+    Returns:
+        int: product of final height and depth
+    """
+
     h = d = a = 0
     funcs = {
         'f': lambda c, h, d, a: (h + c, d + (a * c), a),
