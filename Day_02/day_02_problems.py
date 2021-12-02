@@ -1,6 +1,4 @@
 """
-
-
 --- Day 2: Dive! ---
 Now, you need to figure out how to pilot this thing.
 It seems like the submarine can take a series of commands like forward 1, down
@@ -86,8 +84,6 @@ After following these new instructions, you would have a horizontal position of
 Using this new interpretation of the commands, calculate the horizontal
 position and depth you would have after following the planned course. What do
 you get if you multiply your final horizontal position by your final depth?
-
-
 """
 
 from io import TextIOWrapper
