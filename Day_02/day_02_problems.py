@@ -130,8 +130,8 @@ if __name__ == "__main__":
         data = format_data(in_file)
 
     p1, p2 = positional_products(data)
-    print(f'Part 1: {p1}')
-    print(f'Part 2: {p2}')
+    print(f'Part 1: {p1:10}')
+    print(f'Part 2: {p2:10}')
 
 # Part 1:    2215080
 # Part 2: 1864715580
