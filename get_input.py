@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
-from colors import BLUE, END, RED
+from colors import BLUE, BOLD, END, RED
 
 
 def get_args() -> argparse.Namespace:
@@ -17,7 +17,7 @@ def get_args() -> argparse.Namespace:
     """
 
     parser = argparse.ArgumentParser(
-        f"\n{BLUE}"
+        f"\n{BLUE}{BOLD}"
         "********************************************************************************\n"  # noqa: E501
         "********************************************************************************\n"  # noqa: E501
         "**                                                                            **\n"  # noqa: E501
@@ -163,7 +163,7 @@ def try_make_dir(day: str) -> None:
     """
 
     if os.path.isdir(f"Day_{day}"):
-        print(f"{RED}directory exists.{END}")
+        print(f"{RED}{BOLD}directory exists.{END}")
     else:
         os.mkdir(f"Day_{day}")
 
@@ -179,7 +179,7 @@ def make_input_file(day: str, file: str, data: list[str]) -> None:
     """
 
     if os.path.exists(f"Day_{day}/{file}.txt"):
-        print(f"{RED}input file exists.{END}")
+        print(f"{RED}{BOLD}input file exists.{END}")
         return
 
     with open(f"Day_{day}/{file}.txt", 'w') as input_file:
@@ -201,7 +201,7 @@ def make_python_file(day: str, file: str, instructions: str) -> None:
     # If we already made the file, just overwrite the instructions,
     # keep the code we already wrote.
     if os.path.exists(f"Day_{day}/day_{day}_problems.py"):
-        print(f"{RED}python file exists, editing current file.{END}")
+        print(f"{RED}{BOLD}python file exists, editing current file.{END}")
         with open(f"Day_{day}/day_{day}_problems.py", 'r+') as python_file:
             data = python_file.read()
             s = data.split('\"\"\"', 2)
