@@ -48,3 +48,8 @@ src/test/get-pip.py
 *.yml
 
 test.py
+# These represent a highly golfed day 2 part 1 solution. No need to track
+# as it was not my idea. I found it on reddit.
+# https://www.reddit.com/r/adventofcode/comments/r6zd93/comment/hmwf97g/?utm_source=share&utm_medium=web2x&context=3
+a.py
+a
