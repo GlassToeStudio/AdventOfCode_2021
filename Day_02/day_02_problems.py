@@ -98,7 +98,7 @@ def format_data(data: TextIOWrapper) -> list[tuple[str, int]]:
         list[tuple[str, int]] formatted data
     """
 
-    return [(x.strip()[0], int(x.strip()[-1])) for x in data.readlines()]
+    return [(x[0], int(x.strip()[-1])) for x in data.readlines()]
 
 
 def calculate_position(course: list[tuple[str, int]]) -> int:
@@ -112,9 +112,15 @@ def calculate_position(course: list[tuple[str, int]]) -> int:
         int: product of final height and depth
     """
 
-    h = sum(c[1] for c in course if c[0] == 'f')
-    d = sum(c[1] for c in course if c[0] == 'd')
-    d -= sum(c[1] for c in course if c[0] == 'u')
+    h = d = 0
+    funcs = {
+        'f': lambda c, h, d: (h + c, d),
+        'd': lambda c, h, d: (h, d + c),
+        'u': lambda c, h, d: (h, d - c)
+    }
+
+    for c in course:
+        h, d = funcs[c[0]](c[1], h, d)
     return h * d
 
 
