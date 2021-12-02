@@ -109,15 +109,14 @@ def calculate_position(course):
 
 
 def calculate_position_with_aim(course):
-    h = d = aim = 0
+    h = d = a = 0
+    funcs = {
+        'f': lambda c, h, d, a: (h + c, d + (a * c), a),
+        'd': lambda c, h, d, a: (h, d, a + c),
+        'u': lambda c, h, d, a: (h, d, a - c)
+    }
     for c in course:
-        if c[0] == 'f':
-            h += c[1]
-            d += aim * c[1]
-        if c[0] == 'd':
-            aim += c[1]
-        if c[0] == 'u':
-            aim -= c[1]
+        h, d, a = funcs[c[0]](c[1], h, d, a)
     return h * d
 
 
