@@ -152,50 +152,39 @@ def format_data(data: TextIOWrapper) -> list[str]:
     Returns:
         list[str]: input data as list[str]
     """
+
     return [x.strip() for x in data.readlines()]
 
 
-def generic_count(data, i):
-    j = 0
+def count_most_common_bit_at_index(data, i):
+    count = 0
     for bin_num in data:
         if bin_num[i] == '1':
-            j += 1
-            if j > len(data)//2:
+            count += 1
+            if count > len(data)//2:
                 return '1'
-            if j == len(data)/2:
+            if count == len(data)/2:
                 return '1'
     return '0'
 
 
-def get_gamma_epsilon(data):
-    gamma = [0] * len(data[0])
-    epsilon = ''
+def calc_power_consumption(data):
+    gamma = []
     for i in range(len(data[0])):
-        gamma[i] = '0'
-        j = 0
-        for bin_num in data:
-            if bin_num[i] == '1':
-                j += 1
-                if j > len(data)//2:
-                    gamma[i] = '1'
-                    break
+        gamma.append(count_most_common_bit_at_index(data, i))
 
     scale = int(''.join(['1'] * len(data[0])), 2)
     gamma = int(''.join(gamma), 2)
     epsilon = ~gamma & scale
-    return (gamma, epsilon)
-
-
-def calc_power_consumption(gamma, epsilon):
-    return gamma * epsilon
+    return (gamma * epsilon)
 
 
 def cal_oxygen_rating(data):
     oxy = list(data)
     co2 = list(data)
     for i in range(len(data[0])):
-        check_oxy = generic_count(oxy, i)
-        check_co2 = generic_count(co2, i)
+        check_oxy = count_most_common_bit_at_index(oxy, i)
+        check_co2 = count_most_common_bit_at_index(co2, i)
         for bin_num in data:
             if bin_num in oxy and len(oxy) > 1:
                 if bin_num[i] != check_oxy and i != len(bin_num)-1:
@@ -208,25 +197,17 @@ def cal_oxygen_rating(data):
                     co2.remove(bin_num)
                 elif bin_num[i] == '1' and i == len(bin_num) - 1:
                     co2.remove(bin_num)
-    return oxy, co2
+
+    oxy = int(''.join(oxy), 2)
+    co2 = int(''.join(co2), 2)
+    return oxy * co2
 
 
 if __name__ == '__main__':
     with open('Day_03/input.txt', 'r') as in_file:
         data = format_data(in_file)
-        gamma, epsilon = get_gamma_epsilon(data)
-        print(f'Part 1: {calc_power_consumption(gamma, epsilon)}')
-
-        gamma = bin(gamma)[2:]
-        epsilon = bin(epsilon)[2:]
-        zeros = max(len((gamma)), len((epsilon)))
-        gamma = str(gamma.zfill(zeros))
-        epsilon = str(epsilon.zfill(zeros))
-        o, c = cal_oxygen_rating(data)
-        o = int(''.join(o), 2)
-        c = int(''.join(c), 2)
-        (o, c)
-        print(f'Part 2: {o*c}')
+        print(f'Part 1: {calc_power_consumption(data)}')
+        print(f'Part 2: {cal_oxygen_rating(data)}')
 
 # Part 1: 1997414
 # Part 2: 1032597
