@@ -140,56 +140,51 @@ decimal, not binary.)
 from io import TextIOWrapper
 
 
-def format_data(data: TextIOWrapper) -> list[str]:
-    """Return a list of ints from the given text.'
+def format_data(in_file: TextIOWrapper) -> list[str]:
+    """Return a list of str from the given text.'
 
     Args:
-        data (TextIOWrapper): text file
+        in_file (TextIOWrapper): text file
 
     Returns:
         list[str]: input data as list[str]
     """
 
-    return [x.strip() for x in data.readlines()]
+    return [x.strip() for x in in_file.readlines()]
 
 
-def count_most_common_bit_at_index(data: list[str], i: int) -> int:
-    """Given a list[str], data,  and index i, determine the most
+def common_bit_at_index(nums: list[str], i: int) -> int:
+    """Given a list[str] nums, and index i, determine the most
     common bit (0 or 1) at index for each item in the list. If
     there are an equal number of 0s and 1s, return 1.
 
     Args:
-        data (list[str]): list of binary numbers represented as str
+        nums (list[str]): list of binary numbers represented as str
         i (int): index of bit to check
 
     Returns:
         int: most common bit at index i, (0 or 1)
     """
 
-    if sum(int(x[i]) for x in data) >= len(data) / 2:
-        return "1"
-
-    return "0"
+    return str(int(sum(int(x[i]) for x in nums) >= len(nums) / 2))
 
 
-def calc_power_consumption(data: list[str]) -> int:
+def calc_power_consumption(nums: list[str]) -> int:
     """Given a list of binary numbers represented as str,
     calculate the most common digit, and least common,
     digit at every index for each binary number.\n
-    Let gamma equal a new binary number comprised of most common digits
-    Let epsilon equal a new bindary number for least common digit.\n
+    Let gamma equal a new binary number comprised of most common digit.
+    Let epsilon equal a new binary number for least common digit.\n
     Return the product of the two as an int.
 
     Args:
-        data (list[str]): list of binary numbers represented as str
+        nums (list[str]): list of binary numbers represented as str
 
     Returns:
         int: product of gamma and epsilon
     """
 
-    gamma = ""
-    for i in range(len(data[0])):
-        gamma += count_most_common_bit_at_index(data, i)
+    gamma = "".join(common_bit_at_index(nums, i) for i in range(len(nums[0])))
 
     mask = int(("1" * len(gamma)), 2)
     gamma = int(gamma, 2)
@@ -198,7 +193,7 @@ def calc_power_consumption(data: list[str]) -> int:
     return gamma * epsilon
 
 
-def cal_oxygen_rating(data: list[str]) -> int:
+def cal_oxygen_rating(nums: list[str]) -> int:
     """Given a list of binary numbers represented as str,
     create two new copys of the list.
     Calculate the most common digit, and least common,
@@ -211,37 +206,37 @@ def cal_oxygen_rating(data: list[str]) -> int:
 
     Recalculate the most and least common digits based on the modified lists.\n
 
-    Let oxygen equal the final number in the fist list.
+    Let oxygen equal the final number in the first list.
     Let co2 equal the final number in the second list.\n
 
     Return the product of the two as an int.
 
     Args:
-        data (list[str]): list of binary numbers represented as str
+        nums (list[str]): list of binary numbers represented as str
 
     Returns:
         int: prodcut of oxygen and co2
     """
 
-    oxy = list(data)
-    co2 = list(data)
-    for i in range(len(data[0])):
-        oxy_val = count_most_common_bit_at_index(oxy, i)
-        co2_val = count_most_common_bit_at_index(co2, i)
+    oxy = list(nums)
+    co2 = list(nums)
+    for i in range(len(nums[0])):
+        oxy_val = common_bit_at_index(oxy, i)
+        co2_val = common_bit_at_index(co2, i)
 
-        for bin_num in data:
+        for num in nums:
             # very similar but differnt methods
-            if bin_num in oxy and len(oxy) > 1:
-                if bin_num[i] != oxy_val and i != len(bin_num) - 1:
-                    oxy.remove(bin_num)
-                elif bin_num[i] == "0" and i == len(bin_num) - 1:
-                    oxy.remove(bin_num)
+            if num in oxy and len(oxy) > 1:
+                if num[i] != oxy_val and i != len(num) - 1:
+                    oxy.remove(num)
+                elif num[i] == "0" and i == len(num) - 1:
+                    oxy.remove(num)
 
-            if bin_num in co2 and len(co2) > 1:
-                if bin_num[i] == co2_val and i != len(bin_num) - 1:
-                    co2.remove(bin_num)
-                elif bin_num[i] == "1" and i == len(bin_num) - 1:
-                    co2.remove(bin_num)
+            if num in co2 and len(co2) > 1:
+                if num[i] == co2_val and i != len(num) - 1:
+                    co2.remove(num)
+                elif num[i] == "1" and i == len(num) - 1:
+                    co2.remove(num)
 
     oxy = int("".join(oxy), 2)
     co2 = int("".join(co2), 2)
