@@ -163,12 +163,9 @@ def count_most_common_bit_at_index(data: list[str], i: int) -> int:
         int: most common bit at index i, (0 or 1)
     """
 
-    count = 0
-    for bin_num in data:
-        if bin_num[i] == '1':
-            count += 1
-            if count >= len(data)/2:
-                return '1'
+    if sum(int(x[i]) for x in data) >= len(data)/2:
+        return '1'
+
     return '0'
 
 
@@ -187,13 +184,14 @@ def calc_power_consumption(data: list[str]) -> int:
         int: product of gamma and epsilon
     """
 
-    gamma = []
+    gamma = ''
     for i in range(len(data[0])):
-        gamma.append(count_most_common_bit_at_index(data, i))
+        gamma += (count_most_common_bit_at_index(data, i))
 
-    scale = int(''.join(['1'] * len(data[0])), 2)
-    gamma = int(''.join(gamma), 2)
-    epsilon = ~gamma & scale
+    mask = int(('1' * len(gamma)), 2)
+    gamma = int(gamma, 2)
+    epsilon = ~gamma & mask
+
     return gamma * epsilon
 
 
@@ -225,23 +223,26 @@ def cal_oxygen_rating(data: list[str]) -> int:
     oxy = list(data)
     co2 = list(data)
     for i in range(len(data[0])):
-        check_oxy = count_most_common_bit_at_index(oxy, i)
-        check_co2 = count_most_common_bit_at_index(co2, i)
+        oxy_val = count_most_common_bit_at_index(oxy, i)
+        co2_val = count_most_common_bit_at_index(co2, i)
+
         for bin_num in data:
+            # very similar but differnt methods
             if bin_num in oxy and len(oxy) > 1:
-                if bin_num[i] != check_oxy and i != len(bin_num)-1:
+                if bin_num[i] != oxy_val and i != len(bin_num)-1:
                     oxy.remove(bin_num)
                 elif bin_num[i] == '0' and i == len(bin_num) - 1:
                     oxy.remove(bin_num)
 
             if bin_num in co2 and len(co2) > 1:
-                if bin_num[i] == check_co2 and i != len(bin_num)-1:
+                if bin_num[i] == co2_val and i != len(bin_num)-1:
                     co2.remove(bin_num)
                 elif bin_num[i] == '1' and i == len(bin_num) - 1:
                     co2.remove(bin_num)
 
     oxy = int(''.join(oxy), 2)
     co2 = int(''.join(co2), 2)
+
     return oxy * co2
 
 
