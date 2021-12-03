@@ -155,7 +155,19 @@ def format_data(data: TextIOWrapper) -> list[str]:
     return [x.strip() for x in data.readlines()]
 
 
-def calc_gamma_epsilon_product(data):
+def generic_count(data, i):
+    j = 0
+    for bin_num in data:
+        if bin_num[i] == '1':
+            j += 1
+            if j > len(data)//2:
+                return '1'
+            if j == len(data)/2:
+                return '1'
+    return '0'
+
+
+def get_gamma_epsilon(data):
     gamma = [0] * len(data[0])
     epsilon = ''
     for i in range(len(data[0])):
@@ -171,13 +183,50 @@ def calc_gamma_epsilon_product(data):
     scale = int(''.join(['1'] * len(data[0])), 2)
     gamma = int(''.join(gamma), 2)
     epsilon = ~gamma & scale
-    print(f'{gamma:b} {epsilon:b}')
-    return (gamma * epsilon)
+    return (gamma, epsilon)
+
+
+def calc_power_consumption(gamma, epsilon):
+    return gamma * epsilon
+
+
+def cal_oxygen_rating(data):
+    oxy = list(data)
+    co2 = list(data)
+    for i in range(len(data[0])):
+        check_oxy = generic_count(oxy, i)
+        check_co2 = generic_count(co2, i)
+        for bin_num in data:
+            if bin_num in oxy and len(oxy) > 1:
+                if bin_num[i] != check_oxy and i != len(bin_num)-1:
+                    oxy.remove(bin_num)
+                elif bin_num[i] == '0' and i == len(bin_num) - 1:
+                    oxy.remove(bin_num)
+
+            if bin_num in co2 and len(co2) > 1:
+                if bin_num[i] == check_co2 and i != len(bin_num)-1:
+                    co2.remove(bin_num)
+                elif bin_num[i] == '1' and i == len(bin_num) - 1:
+                    co2.remove(bin_num)
+    return oxy, co2
 
 
 if __name__ == '__main__':
     with open('Day_03/input.txt', 'r') as in_file:
         data = format_data(in_file)
-        print(f'Part 1: {calc_gamma_epsilon_product(data)}')
+        gamma, epsilon = get_gamma_epsilon(data)
+        print(f'Part 1: {calc_power_consumption(gamma, epsilon)}')
+
+        gamma = bin(gamma)[2:]
+        epsilon = bin(epsilon)[2:]
+        zeros = max(len((gamma)), len((epsilon)))
+        gamma = str(gamma.zfill(zeros))
+        epsilon = str(epsilon.zfill(zeros))
+        o, c = cal_oxygen_rating(data)
+        o = int(''.join(o), 2)
+        c = int(''.join(c), 2)
+        (o, c)
+        print(f'Part 2: {o*c}')
 
 # Part 1: 1997414
+# Part 2: 1032597
