@@ -78,6 +78,7 @@ def get_instruction_data(url: str, ID: str) -> str:
     cookies = {'session': ID, }
     res = requests.get(f"{url}", cookies=cookies).text
     html_text = BeautifulSoup(res, 'html.parser').get_text()
+    print(html_text)
     return html_text
 
 
@@ -121,7 +122,7 @@ def format_instruction_text(html_text: str) -> str:
         for line in lines:
             start = 0
             end = MAX_LINE_LENGTH
-            if MAX_LINE_LENGTH > len(line):
+            if MAX_LINE_LENGTH >= len(line):
                 instructions.append(line)
                 continue
             while end < len(line):
@@ -130,7 +131,7 @@ def format_instruction_text(html_text: str) -> str:
                 instructions.append(line[start:end] + '\n')
                 start = end + 1
                 end += MAX_LINE_LENGTH
-                if end > len(line):
+                if end >= len(line):
                     instructions.append(line[start:] + '\n')
 
     os.remove('temp')

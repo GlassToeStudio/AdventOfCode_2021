@@ -30,9 +30,11 @@ example, given the following diagnostic report:
 00010
 01010
 
-Considering only the first bit of each number, there are five 0 bits and
-seven 1 bits. Since the most common bit is 1, the first bit of the gamma
-rate is 1.
+Considering only the first bit of each number, there are five 0 bits and seven
+1 bits. Since the most common bit is 1, the first bit of the gamma rate is 1.
+
+The most common second bit of the numbers in the diagnostic report is 0, so the
+second bit of the gamma rate is 0.
 
 The most common value of the third, fourth, and fifth bits are 1, 1, and 0,
 respectively, and so the final three bits of the gamma rate are 110.
@@ -61,6 +63,8 @@ the first bit of those numbers. Then:
 
 
 Keep only numbers selected by the bit criteria for the type of rating value for
+which you are searching. Discard numbers which do not match the bit criteria.
+
 If you only have one number left, stop; this is the rating value for which you
 are searching.
 
@@ -130,7 +134,6 @@ Use the binary numbers in your diagnostic report to calculate the oxygen
 generator rating and CO2 scrubber rating, then multiply them together. What is
 the life support rating of the submarine? (Be sure to represent your answer in
 decimal, not binary.)
-
 """
 
 
