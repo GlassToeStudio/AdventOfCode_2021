@@ -156,7 +156,19 @@ def format_data(data: TextIOWrapper) -> list[str]:
     return [x.strip() for x in data.readlines()]
 
 
-def count_most_common_bit_at_index(data, i):
+def count_most_common_bit_at_index(data: list[str], i: int) -> int:
+    """Given a list[str], data,  and index i, determine the most
+    common bit (0 or 1) at index for each item in the list. If 
+    there are an equal number of 0s and 1s, return 1.
+
+    Args:
+        data (list[str]): list of binary numbers represented as str
+        i (int): index of bit to check
+
+    Returns:
+        int: most common bit at index i, (0 or 1)
+    """
+
     count = 0
     for bin_num in data:
         if bin_num[i] == '1':
@@ -168,7 +180,21 @@ def count_most_common_bit_at_index(data, i):
     return '0'
 
 
-def calc_power_consumption(data):
+def calc_power_consumption(data: list[str]) -> int:
+    """Given a list of binary numbers represented as str,
+    calculate the most common digit, and least common,
+    digit at every index for each binary number.\n 
+    Let gamma equal a new binary number comprised of most common digits
+    Let epsilon equal a new bindary number for least common digit.\n
+    Return the product of the two as an int.
+
+    Args:
+        data (list[str]): list of binary numbers represented as str
+
+    Returns:
+        int: product of gamma and epsilon
+    """
+
     gamma = []
     for i in range(len(data[0])):
         gamma.append(count_most_common_bit_at_index(data, i))
@@ -176,10 +202,34 @@ def calc_power_consumption(data):
     scale = int(''.join(['1'] * len(data[0])), 2)
     gamma = int(''.join(gamma), 2)
     epsilon = ~gamma & scale
-    return (gamma * epsilon)
+    return gamma * epsilon
 
 
-def cal_oxygen_rating(data):
+def cal_oxygen_rating(data: list[str]) -> int:
+    """Given a list of binary numbers represented as str,
+    create two new copys of the list.
+    Calculate the most common digit, and least common,
+    digit at every index for each binary number in the new lists.\n
+
+    For each iteration, remove any number from the first list that
+    does not have the same digit as the common digit, at the specified index.
+    Remove any number from the second list that does not have the
+    least common digit, at the specified index.\n
+
+    Recalculate the most and least common digits based on the modified lists.\n
+
+    Let oxygen equal the final number in the fist list.
+    Let co2 equal the final number in the second list.\n
+
+    Return the product of the two as an int.
+
+    Args:
+        data (list[str]): list of binary numbers represented as str
+
+    Returns:
+        int: prodcut of oxygen and co2
+    """
+
     oxy = list(data)
     co2 = list(data)
     for i in range(len(data[0])):
