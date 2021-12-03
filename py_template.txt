@@ -15,10 +15,11 @@ def format_data(data: TextIOWrapper) -> list[str]:
     Returns:
         list[str]: input data as list[str]
     """
+
     return [x.strip() for x in data.readlines()]
 
 
-if __name__ == '__main__':
-    with open('Day_{day}/{file}.txt', 'r') as in_file:
+if __name__ == "__main__":
+    with open("Day_{day}/{file}.txt") as in_file:
         data = format_data(in_file)
         print(data)
