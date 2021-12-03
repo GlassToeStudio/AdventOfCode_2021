@@ -167,9 +167,11 @@ def calc_gamma_epsilon_product(data):
                 if j > len(data)//2:
                     gamma[i] = '1'
                     break
-    gamma = int(''.join(gamma), 2)
-    epsilon = ~gamma & 0xFFF
 
+    scale = int(''.join(['1'] * len(data[0])), 2)
+    gamma = int(''.join(gamma), 2)
+    epsilon = ~gamma & scale
+    print(f'{gamma:b} {epsilon:b}')
     return (gamma * epsilon)
 
 
