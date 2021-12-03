@@ -29,7 +29,7 @@ def get_args() -> argparse.Namespace:
         f"{END}"
     )
 
-    parser.add_argument("day", help="Enter the day for the probelm you are working on.")  # noqa: E501
+    parser.add_argument("day", help="Enter the day for the problem you are working on.")  # noqa: E501
     parser.add_argument("-f", "--file", help="Enter the name to save the input file (default: 'input').", default="input")  # noqa: E501
     parser.add_argument("-i", "--input", help="Create the input file.", action="store_true")  # noqa: E501
     parser.add_argument("-p", "--python", help="Create the python template.", action="store_true")  # noqa: E501
@@ -40,7 +40,7 @@ def get_session_id() -> str:
     """Get the session ID from the .env file.
 
     Returns:
-        str: session id for loggged in user
+        str: session id for logged in user
     """
 
     load_dotenv()
@@ -108,7 +108,7 @@ def format_instruction_text(html_text: str) -> str:
         # '--- message ---'
         # 'message'
         # [-]{3}[\s]{1} '--- '
-        # ([\s\w:!]*) 'any characters, whitespace, and colon, exlmation' as a group
+        # ([\s\w:!]*) 'any characters, whitespace, and colon, exclamation' as a group
         # [\s]{1}[-]{3} ' ---'
         r = r"([-]{3}[\s]{1}([\s\w:!]*)[\s]{1}[-]{3})"
         regex = re.compile(r)
@@ -176,7 +176,7 @@ def try_make_dir(day: str) -> None:
 
 def make_input_file(day: str, file: str, data: list[str]) -> None:
     """Save the input data to a file for the given day in its
-    correspsonding directory.
+    corresponding directory.
 
     Args:
         day (str): 01, 21, etc.
@@ -194,14 +194,14 @@ def make_input_file(day: str, file: str, data: list[str]) -> None:
 
 def make_python_file(day: str, file: str, instructions: str) -> None:
     """Save the instruction string to a python file for the given
-    day in its correespsonding directory. If the file exists, just
+    day in its corresponding directory. If the file exists, just
     overwrite the previous instructions with new instructions that
     include part 2.
 
     Args:
         day (str): 01, 21, etc.
         file (str): file name to pass into generated python code
-        instructions (str): instructions to be added adt the top of python file
+        instructions (str): instructions to be added at the top of python file
     """
 
     # If we already made the file, just overwrite the instructions,
