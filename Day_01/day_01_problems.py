@@ -123,6 +123,7 @@ def format_data(data: TextIOWrapper) -> list[int]:
     Returns:
         list[int]: input data as list[int]
     """
+
     return [int(x.strip()) for x in data.readlines()]
 
 
@@ -136,14 +137,15 @@ def count_increaases(depths: list[int], gap: int) -> int:
     Returns:
         int: total increases in depth
     """
-    return sum(depths[x] > depths[x-gap] for x in range(gap, len(depths)))
+
+    return sum(depths[x] > depths[x - gap] for x in range(gap, len(depths)))
 
 
 if __name__ == "__main__":
     with open("Day_01/input.txt", "r") as in_file:
         data = format_data(in_file)
-        print(f'Part 1: {count_increaases(data, 1)}')
-        print(f'Part 2: {count_increaases(data, 3)}')
+        print(f"Part 1: {count_increaases(data, 1)}")
+        print(f"Part 2: {count_increaases(data, 3)}")
 
 # Part 1: 1521
 # Part 2: 1543

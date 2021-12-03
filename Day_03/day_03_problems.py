@@ -141,7 +141,7 @@ from io import TextIOWrapper
 
 
 def format_data(data: TextIOWrapper) -> list[str]:
-    """Return a list of ints from the given text."
+    """Return a list of ints from the given text.'
 
     Args:
         data (TextIOWrapper): text file
@@ -155,7 +155,7 @@ def format_data(data: TextIOWrapper) -> list[str]:
 
 def count_most_common_bit_at_index(data: list[str], i: int) -> int:
     """Given a list[str], data,  and index i, determine the most
-    common bit (0 or 1) at index for each item in the list. If 
+    common bit (0 or 1) at index for each item in the list. If
     there are an equal number of 0s and 1s, return 1.
 
     Args:
@@ -166,16 +166,16 @@ def count_most_common_bit_at_index(data: list[str], i: int) -> int:
         int: most common bit at index i, (0 or 1)
     """
 
-    if sum(int(x[i]) for x in data) >= len(data)/2:
-        return '1'
+    if sum(int(x[i]) for x in data) >= len(data) / 2:
+        return "1"
 
-    return '0'
+    return "0"
 
 
 def calc_power_consumption(data: list[str]) -> int:
     """Given a list of binary numbers represented as str,
     calculate the most common digit, and least common,
-    digit at every index for each binary number.\n 
+    digit at every index for each binary number.\n
     Let gamma equal a new binary number comprised of most common digits
     Let epsilon equal a new bindary number for least common digit.\n
     Return the product of the two as an int.
@@ -187,11 +187,11 @@ def calc_power_consumption(data: list[str]) -> int:
         int: product of gamma and epsilon
     """
 
-    gamma = ''
+    gamma = ""
     for i in range(len(data[0])):
-        gamma += (count_most_common_bit_at_index(data, i))
+        gamma += count_most_common_bit_at_index(data, i)
 
-    mask = int(('1' * len(gamma)), 2)
+    mask = int(("1" * len(gamma)), 2)
     gamma = int(gamma, 2)
     epsilon = ~gamma & mask
 
@@ -232,28 +232,28 @@ def cal_oxygen_rating(data: list[str]) -> int:
         for bin_num in data:
             # very similar but differnt methods
             if bin_num in oxy and len(oxy) > 1:
-                if bin_num[i] != oxy_val and i != len(bin_num)-1:
+                if bin_num[i] != oxy_val and i != len(bin_num) - 1:
                     oxy.remove(bin_num)
-                elif bin_num[i] == '0' and i == len(bin_num) - 1:
+                elif bin_num[i] == "0" and i == len(bin_num) - 1:
                     oxy.remove(bin_num)
 
             if bin_num in co2 and len(co2) > 1:
-                if bin_num[i] == co2_val and i != len(bin_num)-1:
+                if bin_num[i] == co2_val and i != len(bin_num) - 1:
                     co2.remove(bin_num)
-                elif bin_num[i] == '1' and i == len(bin_num) - 1:
+                elif bin_num[i] == "1" and i == len(bin_num) - 1:
                     co2.remove(bin_num)
 
-    oxy = int(''.join(oxy), 2)
-    co2 = int(''.join(co2), 2)
+    oxy = int("".join(oxy), 2)
+    co2 = int("".join(co2), 2)
 
     return oxy * co2
 
 
-if __name__ == '__main__':
-    with open('Day_03/input.txt', 'r') as in_file:
+if __name__ == "__main__":
+    with open("Day_03/input.txt", "r") as in_file:
         data = format_data(in_file)
-        print(f'Part 1: {calc_power_consumption(data)}')
-        print(f'Part 2: {cal_oxygen_rating(data)}')
+        print(f"Part 1: {calc_power_consumption(data)}")
+        print(f"Part 2: {cal_oxygen_rating(data)}")
 
 # Part 1: 1997414
 # Part 2: 1032597
