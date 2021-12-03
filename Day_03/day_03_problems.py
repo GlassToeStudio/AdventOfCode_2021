@@ -195,7 +195,7 @@ def calc_power_consumption(nums: list[str]) -> int:
 
 def calc_oxygen_rating(nums: list[str]) -> int:
     """Given a list of binary numbers represented as str,
-    create two new copys of the list.
+    create two new copies of the list.
     Calculate the most common digit, and least common,
     digit at every index for each binary number in the new lists.\n
 
@@ -215,7 +215,7 @@ def calc_oxygen_rating(nums: list[str]) -> int:
         nums (list[str]): list of binary numbers represented as str
 
     Returns:
-        int: prodcut of oxygen and co2
+        int: product of oxygen and co2
     """
 
     oxy = list(nums)
@@ -225,7 +225,7 @@ def calc_oxygen_rating(nums: list[str]) -> int:
         co2_val = common_bit_at_index(co2, i)
 
         for num in nums:
-            # very similar but differnt methods
+            # very similar but different methods
             if num in oxy and len(oxy) > 1:
                 if num[i] != oxy_val and i != len(num) - 1:
                     oxy.remove(num)

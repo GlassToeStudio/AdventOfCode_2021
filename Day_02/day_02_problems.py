@@ -41,8 +41,6 @@ planned course. What do you get if you multiply your final horizontal position
 by your final depth?
 
 
-Your puzzle answer was 2215080.
-
 --- Part Two ---
 Based on your calculations, the planned course doesn't seem to make any sense.
 You find the submarine manual and discover that the process is actually
@@ -89,17 +87,17 @@ you get if you multiply your final horizontal position by your final depth?
 from io import TextIOWrapper
 
 
-def format_data(data: TextIOWrapper) -> list[tuple[str, int]]:
+def format_data(in_file: TextIOWrapper) -> list[tuple[str, int]]:
     """Return a list of (str, int) from the given text."
 
     Args:
-        data (TextIOWrapper): text file
+        in_file (TextIOWrapper): text file
 
     Returns:
         list[tuple[str, int]] formatted data
     """
 
-    return [(x[0], int(x.strip()[-1])) for x in data.readlines()]
+    return [(x[0], int(x.strip()[-1])) for x in in_file.readlines()]
 
 
 def positional_products(course: list[tuple[str, int]]) -> tuple[int, int]:  # noqa E501

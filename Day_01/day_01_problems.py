@@ -114,17 +114,17 @@ than the previous sum?
 from io import TextIOWrapper
 
 
-def format_data(data: TextIOWrapper) -> list[int]:
+def format_data(in_file: TextIOWrapper) -> list[int]:
     """Return a list of ints from the given text."
 
     Args:
-        data (TextIOWrapper): text file
+        in_file (TextIOWrapper): text file
 
     Returns:
         list[int]: input data as list[int]
     """
 
-    return [int(x.strip()) for x in data.readlines()]
+    return [int(x.strip()) for x in in_file.readlines()]
 
 
 def count_increaases(depths: list[int], gap: int) -> int:
