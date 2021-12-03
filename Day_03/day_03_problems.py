@@ -193,7 +193,7 @@ def calc_power_consumption(nums: list[str]) -> int:
     return gamma * epsilon
 
 
-def cal_oxygen_rating(nums: list[str]) -> int:
+def calc_oxygen_rating(nums: list[str]) -> int:
     """Given a list of binary numbers represented as str,
     create two new copys of the list.
     Calculate the most common digit, and least common,
@@ -248,7 +248,7 @@ if __name__ == "__main__":
     with open("Day_03/input.txt", "r") as in_file:
         data = format_data(in_file)
         print(f"Part 1: {calc_power_consumption(data)}")
-        print(f"Part 2: {cal_oxygen_rating(data)}")
+        print(f"Part 2: {calc_oxygen_rating(data)}")
 
 # Part 1: 1997414
 # Part 2: 1032597
