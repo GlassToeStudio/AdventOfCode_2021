@@ -6,11 +6,11 @@
 from io import TextIOWrapper
 
 
-def format_data(data: TextIOWrapper) -> list[str]:
-    """Return a list of ints from the given text."
+def format_data(in_file: TextIOWrapper) -> list[str]:
+    """Return a list of str from the given text."
 
     Args:
-        data (TextIOWrapper): text file
+        in_file (TextIOWrapper): text file
 
     Returns:
         list[str]: input data as list[str]
