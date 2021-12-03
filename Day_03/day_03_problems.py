@@ -132,6 +132,8 @@ the life support rating of the submarine? (Be sure to represent your answer in
 decimal, not binary.)
 
 """
+
+
 from io import TextIOWrapper
 
 
@@ -165,9 +167,7 @@ def count_most_common_bit_at_index(data: list[str], i: int) -> int:
     for bin_num in data:
         if bin_num[i] == '1':
             count += 1
-            if count > len(data)//2:
-                return '1'
-            if count == len(data)/2:
+            if count >= len(data)/2:
                 return '1'
     return '0'
 
