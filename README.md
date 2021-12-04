@@ -131,7 +131,7 @@ find the bingo boards that are winners.
 Find the first winning bingo board to beat the giant squid.
 
 <p align="center">
-<img src="https://github.com/GlassToeStudio/AdventOfCode_2021/blob/master/Day_04/bingo.png" width="100%" height="100%"
+<img src="https://github.com/GlassToeStudio/AdventOfCode_2021/blob/master/Day_04/bingo.png" width="25%" height="25%"
 </p>
 
 ### Part 2:
