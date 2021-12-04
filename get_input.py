@@ -191,6 +191,9 @@ def make_input_file(day: str, file: str, data: list[str]) -> None:
     with open(f"Day_{day}/{file}.txt", "w") as input_file:
         input_file.write(data)
 
+    with open(f"Day_{day}/sample.txt", "a"):
+        pass
+
 
 def make_python_file(day: str, file: str, instructions: str) -> None:
     """Save the instruction string to a python file for the given
