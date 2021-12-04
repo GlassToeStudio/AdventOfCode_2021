@@ -193,6 +193,34 @@ def calc_power_consumption(nums: list[str]) -> int:
     return gamma * epsilon
 
 
+def alter_in_list(cur_num: str, in_list: list[str], common: str, i: int, special: str) -> list[str]:  # noqa E521
+    """Remove any cur_num from the in_list if the bit at index i
+    does not match the common bit.
+
+    If only two items remain in in_list, and both match the
+    common bit at index i, remove the number that
+    does not contain the special bit at index i.
+
+
+    Args:
+        cur_num (str): Current number in which the bit index is checked
+        in_list (list[str]): List to remove nocompliant numbers
+        common (str): The desired bit at index i
+        i (int): The current index to check
+        special (str): "0" or "1"
+
+    Returns:
+        list[str]: modified in_list of numbers
+    """
+
+    if cur_num in in_list and len(in_list) > 1:
+        if cur_num[i] == special and i == len(cur_num) - 1:
+            in_list.remove(cur_num)
+        elif cur_num[i] != common and i != len(cur_num) - 1:
+            in_list.remove(cur_num)
+    return in_list
+
+
 def calc_oxygen_rating(nums: list[str]) -> int:
     """Given a list of binary numbers represented as str,
     create two new copies of the list.
@@ -220,23 +248,14 @@ def calc_oxygen_rating(nums: list[str]) -> int:
 
     oxy = list(nums)
     co2 = list(nums)
+
     for i in range(len(nums[0])):
         oxy_val = common_bit_at_index(oxy, i)
-        co2_val = common_bit_at_index(co2, i)
+        co2_val = str(~int(common_bit_at_index(co2, i), 2) & 1)  # noqa E521 - Flip each bit for least common
 
         for num in nums:
-            # very similar but different methods
-            if num in oxy and len(oxy) > 1:
-                if num[i] != oxy_val and i != len(num) - 1:
-                    oxy.remove(num)
-                elif num[i] == "0" and i == len(num) - 1:
-                    oxy.remove(num)
-
-            if num in co2 and len(co2) > 1:
-                if num[i] == co2_val and i != len(num) - 1:
-                    co2.remove(num)
-                elif num[i] == "1" and i == len(num) - 1:
-                    co2.remove(num)
+            oxy = alter_in_list(num, oxy, oxy_val, i, "0")
+            co2 = alter_in_list(num, co2, co2_val, i, "1")
 
     oxy = int("".join(oxy), 2)
     co2 = int("".join(co2), 2)
