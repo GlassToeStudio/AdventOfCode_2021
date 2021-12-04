@@ -83,7 +83,7 @@ def get_instruction_data(url: str, ID: str) -> str:
     }
     res = requests.get(f"{url}", cookies=cookies).text
     html_text = BeautifulSoup(res, "html.parser").get_text()
-    print(html_text)
+
     return html_text
 
 
@@ -221,7 +221,7 @@ def make_python_file(day: str, file: str, instructions: str) -> None:
     else:
         with open(f"Day_{day}/day_{day}_problems.py", "w") as python_file:
             with open("py_template.txt", "r") as template:
-                output = template.read().replace("{day}", day).replace("{file}", file).replace("{instructions}", instructions)  # noqa E501
+                output = template.read().replace("{day}", day).replace("{instructions}", instructions)  # noqa E501
             python_file.write(output)
 
 
