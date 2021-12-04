@@ -109,79 +109,142 @@ def format_data(in_file: TextIOWrapper) -> list[str]:
     return [x.strip() for x in in_file.readlines()]
 
 
-# def check_diag(board):
-#     total = 0
-#     for i in range(0, len(board), 6):
-#         total += 1 if board[i] == "x" else 0
-#         if total == 5:
-#             print("diag winner")
-#             return True
-#     total = 0
-#     for i in range(4, len(board) - 4, 4):
-#         total += 1 if board[i] == "x" else 0
-#         if total == 5:
-#             print("diag winner")
-#             return True
-#     return False
+def parse_balls(ball_data: list[str]) -> list[int]:
+    """Return a list of int representing each ball
+    drawn for the bingo game.
+
+    Args:
+        ball_data (list[str]): contains the unparsed ball data
+
+    Returns:
+        list[int]: values of balls drawn
+    """
+
+    return [int(x) for x in ball_data[0].split(",")]
 
 
-def place_ball(ball, board):
-    board = ["x" if x == ball else x for x in board]
-    return board
+def parse_boards(board_data: list[str]) -> list[list[int]]:
+    """Return a list containing the data for each bingo
+    board. Each board is a list withing the returned list.
+
+    Args:
+        board_data (list[str]): unparsed board data
+
+    Returns:
+        list[list[int]]: Each board as entry in a list
+    """
+
+    boards = []
+    for i in range(0, len(board_data) - 1, 6):
+        temp = ",".join(board_data[i: i + 5]).replace(",", " ")
+        boards.append([int(x.strip()) for x in temp.split()])
+    return boards
 
 
-def check_rows(board):
-    for i in range(0, len(board) - 1, 5):
-        total = sum(1 for x in board[i : i + 5] if x == "x")
-        if total == 5:
+def place_ball(ball: int, board: list[int]) -> list[int]:
+    """Checks if the board contains the passed in ball value.
+    If so, replace the value on the board with a ⚫ to mark it.
+    Return the modified board.
+
+    Args:
+        ball (int): Value of the current ball
+        board (list[int]): Current board
+
+    Returns:
+        list[int]: Modified board denoting marked values
+    """
+
+    return ["⚫" if x == ball else x for x in board]
+
+
+def check_rows(board: list[int]) -> bool:
+    """Checks each row in the board to see if every
+    entry in that row is marked. If so, return true
+    else false.
+
+    Args:
+        board (list[int]): Current board
+
+    Returns:
+        bool: True if winning board else false
+    """
+
+    for i in range(0, 25, 5):
+        total = sum(1 for x in board[i: i + 5] if x == "⚫") == 5
+        if total:
             return True
     return False
 
 
-def check_columns(board):
+def check_columns(board: list[int]) -> bool:
+    """Checks each column in the board to see if every
+    entry in that column is marked. If so, return true
+    else false.
+
+    Args:
+        board (list[int]): Current board
+
+    Returns:
+        bool: True if winning board else false
+    """
+
     for i in range(0, 5):
-        total = 0
-        for j in range(0, 25, 5):
-            total += 1 if board[i + j] == "x" else 0
-        if total == 5:
+        total = sum(1 for j in range(0, 25, 5) if board[i + j] == "⚫") == 5
+        if total:
             return True
     return False
 
 
-def calc_solution(ball, board):
-    board = [0 if x == "x" else x for x in board]
-    total = sum(x for x in board)
-    return total * ball
+def calc_solution(winning_ball: int, winning_board: list[int]) -> int:
+    """Sum all remaining unmarked values on the board.
+    Return the product of the sum and the value of the ball.
+
+    Args:
+        winning_ball (int): Value of winning ball
+        winning_board (list[int]): Winning board
+
+    Returns:
+        int: final value for winning
+    """
+
+    return sum(x for x in winning_board if x != "⚫") * winning_ball
 
 
-def main(data):
+def main(input_data: list[str]) -> tuple[int, int]:
+    """Run the bingo simulation until the last winning
+    board is found. Return the solution for the first
+    and last winning boards/
+
+    Args:
+        input_data (list[str]): input from file
+
+    Returns:
+        tuple[int, int]: winning values for 1st and last winners
+    """
+
     winners = []
     w_ball = []
-    balls = [int(x) for x in data[0].split(",")]
-    data = data[2:]
-    boards = []
-    for i in range(0, len(data) - 1, 6):
-        temp = ",".join(data[i : i + 5]).replace(",", " ")
-        boards.append([int(x.strip()) for x in temp.split()])
-
-    for _, ball in enumerate(balls):
-        for j in range(len(boards)):
+    balls = parse_balls(input_data)
+    boards = parse_boards(input_data[2:])
+    for ball in balls:
+        for j, _ in enumerate(boards):
             if j in winners:
                 continue
             boards[j] = place_ball(ball, boards[j])
-            if check_rows(boards[j]):
+            if check_rows(boards[j]) or check_columns(boards[j]):
                 winners.append(j)
                 w_ball.append(ball)
-            if check_columns(boards[j]):
-                winners.append(j)
-                w_ball.append(ball)
-    print(winners, w_ball)
-    return calc_solution(w_ball[0], boards[winners[0]]), calc_solution(w_ball[-1], boards[winners[-1]])
+                continue
+    return (calc_solution(w_ball[0], boards[winners[0]]),
+            calc_solution(w_ball[-1], boards[winners[-1]]))
 
 
 if __name__ == "__main__":
-    with open("Day_04/input.txt") as in_file:
-        data = format_data(in_file)
-        p1, p2 = main(data)
-        print(f"Part 1: {p1}")
-        print(f"Part 2: {p2}")
+    with open("Day_04/input.txt", 'r', encoding='utf-8') as f:
+        data = format_data(f)
+    p1, p2 = main(data)
+    print(f"Part 1: {p1}")
+    print(f"Part 2: {p2}")
+
+# Part 1: 23177
+# Part 2: 6804
