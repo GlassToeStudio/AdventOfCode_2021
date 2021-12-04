@@ -106,7 +106,7 @@ def format_data(in_file: TextIOWrapper) -> list[str]:
         list[str]: input data as list[str]
     """
 
-    return [x.strip() for x in in_file.readlines()]
+    return [x for x in in_file.readlines()]
 
 
 def parse_balls(ball_data: list[str]) -> list[int]:
@@ -136,8 +136,7 @@ def parse_boards(board_data: list[str]) -> list[list[int]]:
 
     boards = []
     for i in range(0, len(board_data) - 1, 6):
-        temp = ",".join(board_data[i: i + 5]).replace(",", " ")
-        boards.append([int(x.strip()) for x in temp.split()])
+        boards.append([int(y) for x in board_data[i:i + 5] for y in x.split()])
     return boards
 
 
