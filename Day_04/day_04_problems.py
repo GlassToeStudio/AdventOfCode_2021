@@ -96,6 +96,23 @@ be?
 from io import TextIOWrapper
 
 
+def print_winning_board(board: list[int]) -> None:
+    """Print the board
+
+    Args:
+        board (list[int]): the board to print
+    """
+
+    print()
+    for i in range(0, 25, 5):
+        for j in range(5):
+            if board[i+j] == "🔵":
+                print(f"{board[i+j]}", end=' ')
+            else:
+                print(f"{board[i+j]:2}", end=' ')
+        print('\n')
+
+
 def format_data(in_file: TextIOWrapper) -> list[str]:
     """Return a list of str from the given text."
 
@@ -153,7 +170,7 @@ def place_ball(ball: int, board: list[int]) -> list[int]:
         list[int]: Modified board denoting marked values
     """
 
-    return ["⚫" if x == ball else x for x in board]
+    return ["🔵" if x == ball else x for x in board]
 
 
 def check_rows(board: list[int]) -> bool:
@@ -169,7 +186,7 @@ def check_rows(board: list[int]) -> bool:
     """
 
     for i in range(0, 25, 5):
-        total = sum(1 for x in board[i: i + 5] if x == "⚫") == 5
+        total = sum(1 for x in board[i: i + 5] if x == "🔵") == 5
         if total:
             return True
     return False
@@ -188,7 +205,7 @@ def check_columns(board: list[int]) -> bool:
     """
 
     for i in range(0, 5):
-        total = sum(1 for j in range(0, 25, 5) if board[i + j] == "⚫") == 5
+        total = sum(1 for j in range(0, 25, 5) if board[i + j] == "🔵") == 5
         if total:
             return True
     return False
@@ -206,7 +223,7 @@ def calc_solution(winning_ball: int, winning_board: list[int]) -> int:
         int: final value for winning
     """
 
-    return sum(x for x in winning_board if x != "⚫") * winning_ball
+    return sum(x for x in winning_board if x != "🔵") * winning_ball
 
 
 def main(input_data: list[str]) -> tuple[int, int]:
@@ -234,6 +251,7 @@ def main(input_data: list[str]) -> tuple[int, int]:
                 winners.append(j)
                 w_ball.append(ball)
                 continue
+    print_winning_board(boards[winners[0]])
     return (calc_solution(w_ball[0], boards[winners[0]]),
             calc_solution(w_ball[-1], boards[winners[-1]]))
 
@@ -241,6 +259,7 @@ def main(input_data: list[str]) -> tuple[int, int]:
 if __name__ == "__main__":
     with open("Day_04/input.txt", 'r', encoding='utf-8') as f:
         data = format_data(f)
+
     p1, p2 = main(data)
     print(f"Part 1: {p1}")
     print(f"Part 2: {p2}")
