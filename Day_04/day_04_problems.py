@@ -106,7 +106,7 @@ def format_data(in_file: TextIOWrapper) -> list[str]:
         list[str]: input data as list[str]
     """
 
-    return [x for x in in_file.readlines()]
+    return list(in_file.readlines())
 
 
 def parse_balls(ball_data: list[str]) -> list[int]:
