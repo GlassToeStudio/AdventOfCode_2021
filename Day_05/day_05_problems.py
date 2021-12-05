@@ -184,19 +184,20 @@ def mark_diagonal_points(points: list[int], diagram: list[list[int]]) -> list[li
     """
 
     x_1, y_1, x_2, y_2 = points
-    y_min = min(y_1, y_2)
-    x_min = min(x_1, x_2)
-    d_x = abs(x_2 - x_1)
-    d_y = abs(y_2 - y_1)
+    y_min, y_max = min(y_1, y_2), max(y_1, y_2)
+    x_min, x_max = min(x_1, x_2), max(x_1, x_2)
 
     try:
-        slope = d_y / d_x
+        slope = (y_2 - y_1) / (x_2 - x_1)
     except ZeroDivisionError:
         slope = 0
 
     if slope == 1:
-        for i in range(0, d_x + 1):
+        for i in range(0, x_max - x_min + 1):
             diagram[y_min + i][x_min + i] += 1
+    elif slope == -1:
+        for i in range(0, x_max - x_min + 1):
+            diagram[y_max - i][x_min + i] += 1
     return diagram
 
 
