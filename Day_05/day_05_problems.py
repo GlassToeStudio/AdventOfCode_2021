@@ -154,16 +154,16 @@ def mark_horizontal_vertical_points(points: list[int], diagram: list[list[int]])
     """
 
     x_1, y_1, x_2, y_2 = points
-    y_min, y_max = min(y_1, y_2), max(y_1, y_2)
-    x_min, x_max = min(x_1, x_2), max(x_1, x_2)
 
     # Horizontal
     if x_1 == x_2:
-        for y_i in range(y_min, y_max + 1):
+        y_min, y_max = min(y_1, y_2), max(y_1, y_2) + 1
+        for y_i in range(y_min, y_max):
             diagram[y_i][x_1] += 1
     # Vertical
     if y_1 == y_2:
-        for x_i in range(x_min, x_max + 1):
+        x_min, x_max = min(x_1, x_2), max(x_1, x_2) + 1
+        for x_i in range(x_min, x_max):
             diagram[y_1][x_i] += 1
     return diagram
 
@@ -209,7 +209,7 @@ def find_dangerous_areas(diagram: list[list[int]]) -> int:
         diagram (list[list[int]]): marked diagram
 
     Returns:
-        int: sum of points >= 2
+        int: sum of points > 1
     """
 
     total = sum(1 for row in diagram for x in row if x > 1)
