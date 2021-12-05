@@ -1,6 +1,4 @@
 """
-
-
 --- Day 5: Hydrothermal Venture ---
 You come across a field of hydrothermal vents on the ocean floor! These vents
 constantly produce large, opaque clouds, so it would be best to avoid them if
@@ -60,10 +58,6 @@ Consider only horizontal and vertical lines. At how many points do at least two
 lines overlap?
 
 
-Your puzzle answer was 6572.The first half of this puzzle is complete! It
-provides one gold star: *
-
-
 
 --- Part Two ---
 Unfortunately, considering only horizontal and vertical lines doesn't give you
@@ -102,105 +96,159 @@ Consider all of the lines. At how many points do at least two lines overlap?
 from io import TextIOWrapper
 
 
-def format_data(in_file: TextIOWrapper) -> list[str]:
-    """Return a list of str from the given text."
+def format_data(in_file: TextIOWrapper) -> list[int]:
+    """Return a list of int from the given text."
 
     Args:
         in_file (TextIOWrapper): text file
 
     Returns:
-        list[str]: input data as list[str]
+        list[int]: input data as list[int]
     """
 
-    return [int(z) for x in in_file.readlines() for y in x.strip().replace(' -> ', ',').split() for z in y.split(',')]
+    return [int(z) for x in in_file.readlines() for y in x.strip().replace(' -> ', ',').split() for z in y.split(',')]  # noqa E501
 
 
-def check_points(points, board):
-    x1 = points[0]
-    x2 = points[2]
-    y1 = points[1]
-    y2 = points[3]
-    maxy = max(y1, y2)
-    miny = min(y1, y2)
-    maxx = max(x1, x2)
-    minx = min(x1, x2)
-    slope = 0
-    if (maxy - miny == maxx - minx):
-        slope = 1
-        if (y2-y1) * (x2-x1) < 0:
-            slope = -1
-    if x1 == x2:
-        for z in range(miny, maxy+1):
-            board[z][x1] += 1
-    elif y1 == y2:
-        for z in range(minx, maxx+1):
-            board[y1][z] += 1
-    elif slope == 1:
-        for i in range(0, maxx-minx+1):
-            board[miny+i][minx+i] += 1
+def print_diagram(diagram: list[list[int]]) -> None:
+    """Print the diagram to the terminal
+
+    Args:
+        diagram (list[list[int]]): The diagram
+    """
+
+    _ = [print(*[row[x] if row[x] > 0 else '.' for x in row], end='\n') for row in diagram]  # noqa E501
+
+
+def make_diagram(initial_data: list[int]) -> list[list[int]]:
+    """Given a list of points (x1, y1, x2, y2, ... xn, yn),
+    construct an n by n list of list[int] to represent a
+    diagram that will hold all points. Fill each spot with
+    a 0 to begin.
+
+    Args:
+        initial_data (list[int]): initial list of points
+
+    Returns:
+        list[list[int]]: diagram
+    """
+
+    width, height = max(initial_data[::2]), max(initial_data[1::2])
+    diagram = [[0 for _ in range(height+1)] for _ in range(width+1)]
+    return diagram
+
+
+def mark_horizontal_vertical_points(points: list[int], diagram: list[list[int]]) -> list[list[int]]:  # noqa E501
+    """For the given list of 4 points (x1, y1, x2, y2) line segment,
+    add 1 to each point in the diagram the line segments include.
+
+    Only consider horizontal and vertical line segments.
+
+
+    Args:
+        points (list[int]): start and end of line segment
+        diagram (list[list[int]]): initial diagram
+
+    Returns:
+        list[list[int]]: marked diagram
+    """
+    x_1, y_1, x_2, y_2 = points
+    y_min, y_max = min(y_1, y_2), max(y_1, y_2)
+    x_min, x_max = min(x_1, x_2), max(x_1, x_2)
+
+    # Horizontal
+    if x_1 == x_2:
+        for y_i in range(y_min, y_max + 1):
+            diagram[y_i][x_1] += 1
+    # Vertical
+    if y_1 == y_2:
+        for x_i in range(x_min, x_max + 1):
+            diagram[y_1][x_i] += 1
+    return diagram
+
+
+def mark_diagonal_points(points: list[int], diagram: list[list[int]]) -> list[list[int]]:  # noqa E501
+    """For the given list of 4 points (x1, y1, x2, y2) line segment,
+    add 1 to each point in the diagram the line segments include.
+
+    Only consider vertical lines.
+
+
+    Args:
+        points (list[int]): start and end of line segment
+        diagram (list[list[int]]): initial diagram
+
+    Returns:
+        list[list[int]]: marked diagram
+    """
+
+    x_1, y_1, x_2, y_2 = points
+    y_min, y_max = min(y_1, y_2), max(y_1, y_2)
+    x_min, x_max = min(x_1, x_2), max(x_1, x_2)
+
+    try:
+        slope = (y_2-y_1)/(x_2-x_1)
+    except ZeroDivisionError:
+        slope = 0
+
+    if slope == 1:
+        for i in range(0, x_max-x_min + 1):
+            diagram[y_min+i][x_min+i] += 1
+
     elif slope == -1:
-        for i in range(0, maxx-minx+1):
-            board[maxy-i][minx+i] += 1
+        for i in range(0, x_max-x_min + 1):
+            diagram[y_max-i][x_min+i] += 1
 
-    return board
-
-
-def print_board(board):
-    for y in range(len(board)):
-        for x in range(len(board)):
-            print(board[y][x] if board[y][x] > 0 else '.', end='')
-        print()
+    return diagram
 
 
-def sum_2s(board):
-    total = 0
-    for i in range(len(board[0])):
-        total += sum(1 for x in board[i] if x >= 2)
+def find_dangerous_areas(diagram: list[list[int]]) -> int:
+    """For the given marked diagram, calculate the total
+    number of points  where at least two lines overlap
+    i.e. The value is >= 2
+
+    Args:
+        diagram (list[list[int]]): marked diagram
+
+    Returns:
+        int: sum of points >= 2
+    """
+
+    total = sum(1 for row in diagram for x in row if x >= 2)
     return total
 
 
-def make_board():
-    board = []
-    row = []
-    for x in range(maximum_x+1):
-        for y in range(maximum_y+1):
-            row.append(0)
-        board.append(row)
-        row = []
-    return board
+def main(initial_data: list[int]) -> tuple[int, int]:
+    """Return the result of checking all horizontal and
+    vertical line segments as part 1.
+    Return the result of then checking the diagonal line
+    segments as part 2.
+
+    Args:
+        initial_data (list[int]): the initial input data
+
+    Returns:
+        tuple[int, int]: results for part 1 and part 2
+    """
+
+    diagram = make_diagram(initial_data)
+
+    for i in range(0, len(initial_data), 4):
+        diagram = mark_horizontal_vertical_points(initial_data[i:i+4], diagram)
+    part_1 = find_dangerous_areas(diagram)
+
+    for i in range(0, len(initial_data), 4):
+        diagram = mark_diagonal_points(initial_data[i:i+4], diagram)
+    part_2 = find_dangerous_areas(diagram)
+    return part_1, part_2
 
 
 if __name__ == "__main__":
     with open("Day_05/input.txt", 'r', encoding='utf-8') as f:
         data = format_data(f)
-        maximum_x = max(data[::2])
-        maximum_y = max(data[1::2])
 
-        board = make_board()
-        for i in range(0, len(data), 4):
-            board = check_points(data[i:i+4], board)
-        print_board(board)
-        print(sum_2s(board))
+    p1, p2 = main(data)
+    print(f"Part 1: {p1:5}")
+    print(f"Part 2: {p2:5}")
 
-"""
-.......1..
-..1....1..
-..1....1..
-.......1..
-.112111211
-..........
-..........
-..........
-..........
-222111....
-
-000000000
-000000000
-000000000
-000000000
-000000000
-000000000
-000000000
-000000000
-6377
-"""
+# Part 1:  6572
+# Part 2: 21466
