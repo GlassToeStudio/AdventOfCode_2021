@@ -117,7 +117,7 @@ def print_diagram(diagram: list[list[int]]) -> None:
         diagram (list[list[int]]): The diagram
     """
 
-    _ = [print(*[row[x] if row[x] > 0 else "." for x in row], end="\n") for row in diagram]
+    _ = [print(*[x if x > 0 else "." for x in row], end="\n") for row in diagram]
 
 
 def make_diagram(initial_data: list[list[int]]) -> list[list[int]]:
