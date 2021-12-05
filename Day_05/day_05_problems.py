@@ -96,17 +96,18 @@ Consider all of the lines. At how many points do at least two lines overlap?
 from io import TextIOWrapper
 
 
-def format_data(in_file: TextIOWrapper) -> list[int]:
+def format_data(in_file: TextIOWrapper) -> list[list[int]]:
     """Return a list of int from the given text."
 
     Args:
         in_file (TextIOWrapper): text file
 
     Returns:
-        list[int]: input data as list[int]
+        list[list[int]]: input data as list of line segments
     """
 
-    return [int(z) for x in in_file.readlines() for y in x.strip().replace(" -> ", ",").split() for z in y.split(",")]
+    _ = [int(z) for x in in_file.readlines() for y in x.strip().replace(" -> ", ",").split() for z in y.split(",")]
+    return [_[i: i + 4] for i in range(0, len(_), 4)]
 
 
 def print_diagram(diagram: list[list[int]]) -> None:
@@ -119,20 +120,20 @@ def print_diagram(diagram: list[list[int]]) -> None:
     _ = [print(*[row[x] if row[x] > 0 else "." for x in row], end="\n") for row in diagram]
 
 
-def make_diagram(initial_data: list[int]) -> list[list[int]]:
+def make_diagram(initial_data: list[list[int]]) -> list[list[int]]:
     """Given a list of points (x1, y1, x2, y2, ... xn, yn),
     construct an n by n list of list[int] to represent a
     diagram that will hold all points. Fill each spot with
     a 0 to begin.
 
     Args:
-        initial_data (list[int]): initial list of points
+        initial_data (list[list[int]]): initial list of points
 
     Returns:
         list[list[int]]: diagram
     """
 
-    width, height = max(initial_data[::2]), max(initial_data[1::2])
+    width, height = max(max(_[:: 2]) for _ in initial_data), max(max(_[1:: 2]) for _ in initial_data)
     diagram = [[0 for _ in range(height + 1)] for _ in range(width + 1)]
     return diagram
 
@@ -194,11 +195,9 @@ def mark_diagonal_points(points: list[int], diagram: list[list[int]]) -> list[li
     if slope == 1:
         for i in range(0, x_max - x_min + 1):
             diagram[y_min + i][x_min + i] += 1
-
     elif slope == -1:
         for i in range(0, x_max - x_min + 1):
             diagram[y_max - i][x_min + i] += 1
-
     return diagram
 
 
@@ -218,27 +217,27 @@ def find_dangerous_areas(diagram: list[list[int]]) -> int:
     return total
 
 
-def main(initial_data: list[int]) -> tuple[int, int]:
+def main(line_segments: list[list[int]]) -> tuple[int, int]:
     """Return the result of checking all horizontal and
     vertical line segments as part 1.
     Return the result of then checking the diagonal line
     segments as part 2.
 
     Args:
-        initial_data (list[int]): the initial input data
+        initial_data (list[list[int]]): the initial input data
 
     Returns:
         tuple[int, int]: results for part 1 and part 2
     """
 
-    diagram = make_diagram(initial_data)
+    diagram = make_diagram(line_segments)
 
-    for i in range(0, len(initial_data), 4):
-        diagram = mark_horizontal_vertical_points(initial_data[i: i + 4], diagram)
+    for points in line_segments:
+        diagram = mark_horizontal_vertical_points(points, diagram)
     part_1 = find_dangerous_areas(diagram)
 
-    for i in range(0, len(initial_data), 4):
-        diagram = mark_diagonal_points(initial_data[i: i + 4], diagram)
+    for points in line_segments:
+        diagram = mark_diagonal_points(points, diagram)
     part_2 = find_dangerous_areas(diagram)
     return part_1, part_2
 
