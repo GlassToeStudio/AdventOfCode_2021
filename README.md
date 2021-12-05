@@ -139,3 +139,32 @@ Find the last winning bingo board to insure the giant squid wins.
 
 </p>
 </details>
+
+
+
+<details>
+<summary><b>Day 5: Hydrothermal Venture</b></summary>
+<p>
+Write this
+
+```
+0,9 -> 5,9
+8,0 -> 0,8
+9,4 -> 3,4
+2,2 -> 2,1
+7,0 -> 7,4
+6,4 -> 2,0
+0,9 -> 2,9
+3,4 -> 1,4
+0,0 -> 8,8
+5,5 -> 8,2
+```
+
+### Part 1:
+Write this
+
+### Part 2:
+Write this
+
+</p>
+</details>
