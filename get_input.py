@@ -1,3 +1,5 @@
+"""Get the stuff from AoC"""
+
 import argparse
 import os
 import re
@@ -30,7 +32,6 @@ def get_args() -> argparse.Namespace:
     )
 
     parser.add_argument("day", help="Enter the day for the problem you are working on.")  # noqa: E501
-    parser.add_argument("-f", "--file", help="Enter the name to save the input file (default: 'input').", default="input")  # noqa: E501
     parser.add_argument("-i", "--input", help="Create the input file.", action="store_true")  # noqa: E501
     parser.add_argument("-p", "--python", help="Create the python template.", action="store_true")  # noqa: E501
     return parser.parse_args()
@@ -47,7 +48,7 @@ def get_session_id() -> str:
     return os.getenv("SESSION_ID")
 
 
-def get_input_data(url: str, ID: str) -> list[str]:
+def get_input_data(url: str, session_id: str) -> list[str]:
     """Get the input data for the given url (day of advent of code)
 
     Args:
@@ -59,7 +60,7 @@ def get_input_data(url: str, ID: str) -> list[str]:
     """
 
     cookies = {
-        "session": ID,
+        "session": session_id,
     }
     res = requests.get(f"{url}/input", cookies=cookies)
     data = res.content.decode("UTF-8")
@@ -67,7 +68,7 @@ def get_input_data(url: str, ID: str) -> list[str]:
     return data
 
 
-def get_instruction_data(url: str, ID: str) -> str:
+def get_instruction_data(url: str, session_id: str) -> str:
     """Get the instruction text from the given url (day of advent of code)
 
     Args:
@@ -79,7 +80,7 @@ def get_instruction_data(url: str, ID: str) -> str:
     """
 
     cookies = {
-        "session": ID,
+        "session": session_id,
     }
     res = requests.get(f"{url}", cookies=cookies).text
     html_text = BeautifulSoup(res, "html.parser").get_text()
@@ -100,8 +101,8 @@ def format_instruction_text(html_text: str) -> str:
     # Save the text and format it.
     # Not sure why it differs so much after saving and reading
     # back from a file versus just doing html_text.split('\n')[18:-11]
-    with open("temp", "a+") as f:
-        MAX_LINE_LENGTH = 79
+    with open("temp", "a+", encoding="utf-8") as python_file:
+        max_line_length = 79
         instructions = []
 
         # Checks for '--- message ---' and keeps a match of the inner text
@@ -110,24 +111,24 @@ def format_instruction_text(html_text: str) -> str:
         # [-]{3}[\s]{1} '--- '
         # ([\s\w:!]*) 'any characters, whitespace, colon, exclamation'
         # [\s]{1}[-]{3} ' ---'
-        r = r"([-]{3}[\s]{1}([\s\w:!]*)[\s]{1}[-]{3})"
-        regex = re.compile(r)
-        match = regex.findall(html_text)
-        for m in match:
-            html_text = html_text.replace(m[0], f"\n\n--- {m[1]} ---\n")
+        regex_str = r"([-]{3}[\s]{1}([\s\w:!]*)[\s]{1}[-]{3})"
+        regex = re.compile(regex_str)
+        matchs = regex.findall(html_text)
+        for match in matchs:
+            html_text = html_text.replace(match[0], f"\n\n--- {match[1]} ---\n")
 
         # TODO: Prefer to format the html_text directly and not
         # write to, and read back from, a file.
-        f.write(html_text)
-        f.seek(0)  # back to the beginning.
-        lines = f.readlines()[18:-11]  # Cut out the junk.
+        python_file.write(html_text)
+        python_file.seek(0)  # back to the beginning.
+        lines = python_file.readlines()[18:-11]  # Cut out the junk.
 
         # Break the lines up such that they are never longer
         # than MAX_LINE_LENGTH, for pep8
         for line in lines:
             start = 0
-            end = MAX_LINE_LENGTH
-            if MAX_LINE_LENGTH >= len(line):
+            end = max_line_length
+            if max_line_length >= len(line):
                 instructions.append(line)
                 continue
             while end < len(line):
@@ -135,7 +136,7 @@ def format_instruction_text(html_text: str) -> str:
                     end -= 1
                 instructions.append(line[start:end] + "\n")
                 start = end + 1
-                end += MAX_LINE_LENGTH
+                end += max_line_length
                 if end >= len(line):
                     instructions.append(line[start:] + "\n")
 
@@ -174,7 +175,7 @@ def try_make_dir(day: str) -> None:
         os.mkdir(f"Day_{day}")
 
 
-def make_input_file(day: str, file: str, data: list[str]) -> None:
+def make_input_file(day: str, data: list[str]) -> None:
     """Save the input data to a file for the given day in its
     corresponding directory.
 
@@ -184,18 +185,18 @@ def make_input_file(day: str, file: str, data: list[str]) -> None:
         data (list[str]): the data to save to file
     """
 
-    if os.path.exists(f"Day_{day}/{file}.txt"):
+    if os.path.exists(f"Day_{day}/input.txt"):
         print(f"{YELLOW}{BOLD}* Input file exists.{END}")
         return
 
-    with open(f"Day_{day}/{file}.txt", "w") as input_file:
+    with open(f"Day_{day}/input.txt", "w", encoding="utf-8") as input_file:
         input_file.write(data)
 
-    with open(f"Day_{day}/sample.txt", "a"):
+    with open(f"Day_{day}/sample.txt", "a", encoding="utf-8"):
         pass
 
 
-def make_python_file(day: str, file: str, instructions: str) -> None:
+def make_python_file(day: str, instructions: str) -> None:
     """Save the instruction string to a python file for the given
     day in its corresponding directory. If the file exists, just
     overwrite the previous instructions with new instructions that
@@ -203,7 +204,6 @@ def make_python_file(day: str, file: str, instructions: str) -> None:
 
     Args:
         day (str): 01, 21, etc.
-        file (str): file name to pass into generated python code
         instructions (str): instructions to be added at the top of python file
     """
 
@@ -211,32 +211,38 @@ def make_python_file(day: str, file: str, instructions: str) -> None:
     # keep the code we already wrote.
     if os.path.exists(f"Day_{day}/day_{day}_problems.py"):
         print(f"{YELLOW}{BOLD}python file exists, editing current file.{END}")
-        with open(f"Day_{day}/day_{day}_problems.py", "r+") as python_file:
+        with open(f"Day_{day}/day_{day}_problems.py", "r+", encoding="utf-8") as python_file:
             data = python_file.read()
-            s = data.split('"""', 2)
-            output = f"\"\"\"\n{instructions}\"\"\"{''.join(s[2:])}"
+            previous_contents = data.split('"""', 2)
+            output = f"\"\"\"\n{instructions}\"\"\"{''.join(previous_contents[2:])}"
             python_file.seek(0)
             python_file.truncate(0)
             python_file.write(output)
     else:
-        with open(f"Day_{day}/day_{day}_problems.py", "w") as python_file:
-            with open("py_template.txt", "r") as template:
+        with open(f"Day_{day}/day_{day}_problems.py", "w", encoding="utf-8") as python_file:
+            with open("py_template.txt", "r", encoding="utf-8") as template:
                 output = template.read().replace("{day}", day).replace("{instructions}", instructions)  # noqa E501
             python_file.write(output)
 
 
-if __name__ == "__main__":
+def main():
+    """Main method"""
+
     args = get_args()
-    url = f"https://adventofcode.com/2021/day/{args.day}"
-    id = get_session_id()
+    aoc_url = f"https://adventofcode.com/2021/day/{args.day}"
+    session_id = get_session_id()
 
     day = fix_day(args.day)
     try_make_dir(day)
 
     if args.input:
-        input_data = get_input_data(url, id)
-        make_input_file(day, args.file, input_data)
+        input_data = get_input_data(aoc_url, session_id)
+        make_input_file(day, input_data)
     if args.python:
-        instruction_data = get_instruction_data(url, id)
+        instruction_data = get_instruction_data(aoc_url, session_id)
         instructions = format_instruction_text(instruction_data)
-        make_python_file(day, args.file, instructions)
+        make_python_file(day, instructions)
+
+
+if __name__ == "__main__":
+    main()
