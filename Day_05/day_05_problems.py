@@ -106,7 +106,7 @@ def format_data(in_file: TextIOWrapper) -> list[int]:
         list[int]: input data as list[int]
     """
 
-    return [int(z) for x in in_file.readlines() for y in x.strip().replace(' -> ', ',').split() for z in y.split(',')]  # noqa E501
+    return [int(z) for x in in_file.readlines() for y in x.strip().replace(" -> ", ",").split() for z in y.split(",")]
 
 
 def print_diagram(diagram: list[list[int]]) -> None:
@@ -116,7 +116,7 @@ def print_diagram(diagram: list[list[int]]) -> None:
         diagram (list[list[int]]): The diagram
     """
 
-    _ = [print(*[row[x] if row[x] > 0 else '.' for x in row], end='\n') for row in diagram]  # noqa E501
+    _ = [print(*[row[x] if row[x] > 0 else "." for x in row], end="\n") for row in diagram]
 
 
 def make_diagram(initial_data: list[int]) -> list[list[int]]:
@@ -133,11 +133,11 @@ def make_diagram(initial_data: list[int]) -> list[list[int]]:
     """
 
     width, height = max(initial_data[::2]), max(initial_data[1::2])
-    diagram = [[0 for _ in range(height+1)] for _ in range(width+1)]
+    diagram = [[0 for _ in range(height + 1)] for _ in range(width + 1)]
     return diagram
 
 
-def mark_horizontal_vertical_points(points: list[int], diagram: list[list[int]]) -> list[list[int]]:  # noqa E501
+def mark_horizontal_vertical_points(points: list[int], diagram: list[list[int]]) -> list[list[int]]:
     """For the given list of 4 points (x1, y1, x2, y2) line segment,
     add 1 to each point in the diagram the line segments include.
 
@@ -151,6 +151,7 @@ def mark_horizontal_vertical_points(points: list[int], diagram: list[list[int]])
     Returns:
         list[list[int]]: marked diagram
     """
+
     x_1, y_1, x_2, y_2 = points
     y_min, y_max = min(y_1, y_2), max(y_1, y_2)
     x_min, x_max = min(x_1, x_2), max(x_1, x_2)
@@ -166,7 +167,7 @@ def mark_horizontal_vertical_points(points: list[int], diagram: list[list[int]])
     return diagram
 
 
-def mark_diagonal_points(points: list[int], diagram: list[list[int]]) -> list[list[int]]:  # noqa E501
+def mark_diagonal_points(points: list[int], diagram: list[list[int]]) -> list[list[int]]:
     """For the given list of 4 points (x1, y1, x2, y2) line segment,
     add 1 to each point in the diagram the line segments include.
 
@@ -186,17 +187,17 @@ def mark_diagonal_points(points: list[int], diagram: list[list[int]]) -> list[li
     x_min, x_max = min(x_1, x_2), max(x_1, x_2)
 
     try:
-        slope = (y_2-y_1)/(x_2-x_1)
+        slope = (y_2 - y_1) / (x_2 - x_1)
     except ZeroDivisionError:
         slope = 0
 
     if slope == 1:
-        for i in range(0, x_max-x_min + 1):
-            diagram[y_min+i][x_min+i] += 1
+        for i in range(0, x_max - x_min + 1):
+            diagram[y_min + i][x_min + i] += 1
 
     elif slope == -1:
-        for i in range(0, x_max-x_min + 1):
-            diagram[y_max-i][x_min+i] += 1
+        for i in range(0, x_max - x_min + 1):
+            diagram[y_max - i][x_min + i] += 1
 
     return diagram
 
@@ -233,17 +234,17 @@ def main(initial_data: list[int]) -> tuple[int, int]:
     diagram = make_diagram(initial_data)
 
     for i in range(0, len(initial_data), 4):
-        diagram = mark_horizontal_vertical_points(initial_data[i:i+4], diagram)
+        diagram = mark_horizontal_vertical_points(initial_data[i: i + 4], diagram)
     part_1 = find_dangerous_areas(diagram)
 
     for i in range(0, len(initial_data), 4):
-        diagram = mark_diagonal_points(initial_data[i:i+4], diagram)
+        diagram = mark_diagonal_points(initial_data[i: i + 4], diagram)
     part_2 = find_dangerous_areas(diagram)
     return part_1, part_2
 
 
 if __name__ == "__main__":
-    with open("Day_05/input.txt", 'r', encoding='utf-8') as f:
+    with open("Day_05/input.txt", "r", encoding="utf-8") as f:
         data = format_data(f)
 
     p1, p2 = main(data)

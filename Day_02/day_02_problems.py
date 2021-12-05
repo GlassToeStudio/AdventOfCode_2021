@@ -117,15 +117,15 @@ def positional_products(course: list[tuple[str, int]]) -> tuple[int, int]:  # no
         "d": lambda amt, distance, depth, depth_aim: (distance, depth, depth_aim + amt),  # noqa E501
         "u": lambda amt, distance, depth, depth_aim: (distance, depth, depth_aim - amt),  # noqa E501
     }
-    for dir, amt in course:
-        distance, depth, depth_aim = funcs[dir](amt, distance, depth, depth_aim)  # noqa E501
+    for direction, amt in course:
+        distance, depth, depth_aim = funcs[direction](amt, distance, depth, depth_aim)  # noqa E501
 
     return distance * depth_aim, distance * depth
 
 
 if __name__ == "__main__":
-    with open("Day_02/input.txt", "r") as in_file:
-        data = format_data(in_file)
+    with open("Day_02/input.txt", "r", encoding="utf-8") as f:
+        data = format_data(f)
 
     p1, p2 = positional_products(data)
     print(f"Part 1: {p1:10}")

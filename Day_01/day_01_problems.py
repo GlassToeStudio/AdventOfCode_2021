@@ -142,8 +142,8 @@ def count_increaases(depths: list[int], gap: int) -> int:
 
 
 if __name__ == "__main__":
-    with open("Day_01/input.txt", "r") as in_file:
-        data = format_data(in_file)
+    with open("Day_01/input.txt", "r", encoding='utf-8') as f:
+        data = format_data(f)
         print(f"Part 1: {count_increaases(data, 1)}")
         print(f"Part 2: {count_increaases(data, 3)}")
 

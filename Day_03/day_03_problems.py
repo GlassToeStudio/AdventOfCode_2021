@@ -264,8 +264,8 @@ def calc_oxygen_rating(nums: list[str]) -> int:
 
 
 if __name__ == "__main__":
-    with open("Day_03/input.txt", "r") as in_file:
-        data = format_data(in_file)
+    with open("Day_03/input.txt", "r", encoding="utf-8") as f:
+        data = format_data(f)
         print(f"Part 1: {calc_power_consumption(data)}")
         print(f"Part 2: {calc_oxygen_rating(data)}")
 
