@@ -113,8 +113,9 @@ def format_instruction_text(html_text: str) -> str:
         # [\s]{1}[-]{3} ' ---'
         regex_str = r"([-]{3}[\s]{1}([\s\w:!]*)[\s]{1}[-]{3})"
         regex = re.compile(regex_str)
-        matchs = regex.findall(html_text)
-        for match in matchs:
+        matches = regex.findall(html_text)
+        title = matches[0][1]
+        for match in matches:
             html_text = html_text.replace(match[0], f"\n\n--- {match[1]} ---\n")
 
         # TODO: Prefer to format the html_text directly and not
@@ -141,7 +142,7 @@ def format_instruction_text(html_text: str) -> str:
                     instructions.append(line[start:] + "\n")
 
     os.remove("temp")
-    return "".join(instructions)
+    return "".join(instructions), title
 
 
 def fix_day(day: str) -> str:
@@ -225,6 +226,18 @@ def make_python_file(day: str, instructions: str) -> None:
             python_file.write(output)
 
 
+def update_readme(title: str) -> None:
+    """Update readme
+
+    Args:
+        title (str: title extracted from isntruction text.
+    """
+    with open("README.md", "a", encoding="utf-8") as readme_file:
+        with open("readme_template.txt", "r", encoding="utf-8") as template:
+            output = template.read().replace("{title}", title)
+        readme_file.write(output)
+
+
 def main():
     """Main method"""
 
@@ -240,8 +253,9 @@ def main():
         make_input_file(day, input_data)
     if args.python:
         instruction_data = get_instruction_data(aoc_url, session_id)
-        instructions = format_instruction_text(instruction_data)
+        instructions, title = format_instruction_text(instruction_data)
         make_python_file(day, instructions)
+        update_readme(title)
 
 
 if __name__ == "__main__":
