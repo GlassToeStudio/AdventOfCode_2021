@@ -127,7 +127,7 @@ def make_png(diagram: list[list[int]], i) -> None:                              
     pixels = image.load()
     for c_i, column in enumerate(diagram):
         for r_i, row in enumerate(column):
-            cell_color = (row * 90, 10, 10)
+            cell_color = (row * 90, 10, 10) if row != 0 else (0, 0, 0)
             pixels[c_i, r_i] = cell_color
     # image = enlarge_image(image, len(diagram[0]), len(diagram), base=4096)                    # VIS: This is only for makeing an image!
     filepath = (f'Day_05/images/image_{i}.png')
@@ -283,7 +283,7 @@ def main(line_segments: list[list[int]]) -> tuple[int, int]:
     for points in line_segments:
         diagram, i = mark_diagonal_points(points, diagram, i)                                   # VIS: This is only for makeing an image! (the *** i *** specifically)
     part_2 = find_dangerous_areas(diagram)
-    # make_png(diagram, i)                                                                      # VIS: For single image, only call make_png(diagram, i) here, and not above.
+    make_png(diagram, i)                                                                      # VIS: For single image, only call make_png(diagram, i) here, and not above.
 
     return part_1, part_2
 
