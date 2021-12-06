@@ -164,7 +164,11 @@ Write this
 Write this
 
 ### Part 2:
-Write this
+
+
+<p align="center">
+<img src="https://github.com/GlassToeStudio/AdventOfCode_2021/blob/master/Day_05/day_05_vis_large.png" width="25%" height="25%"
+</p>
 
 </p>
 </details>
