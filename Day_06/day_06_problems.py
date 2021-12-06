@@ -1,6 +1,4 @@
 """
-
-
 --- Day 6: Lanternfish ---
 The sea floor is getting steeper. Maybe the sleigh keys got carried this way?
 A massive school of glowing lanternfish swims past. They must spawn quickly to
@@ -76,11 +74,6 @@ Find a way to simulate lanternfish. How many lanternfish would there be after
 80 days?
 
 
-Your puzzle answer was 352872.The first half of this puzzle is complete! It
-provides one gold star: *
-
-
-
 --- Part Two ---
 Suppose the lanternfish live forever and have unlimited food and space. Would
 they take over the entire ocean?
@@ -92,26 +85,37 @@ How many lanternfish would there be after 256 days?
 """
 
 
-import math
 from collections import Counter, defaultdict
 from io import TextIOWrapper
 
 
-def format_data(in_file: TextIOWrapper) -> list[int]:
-    """Return a list of str from the given text."
+def format_data(in_file: TextIOWrapper) -> dict[int, int]:
+    """Return a dict[int, int] from the given text.
+    The dict has a key for each age of fish 0-8, with the
+    amount of each as the value
 
     Args:
         in_file (TextIOWrapper): text file
 
     Returns:
-        list[int]: input data as list[str]
+        dict[int, int]: a dict{age: amount}
     """
 
     return Counter([int(x.strip()) for x in in_file.read().split(',')])
 
 
-def main(population, days):
-    population = Counter(population)
+def main(population: dict[int, int], days: int) -> int:
+    """Calculate the population after n days for the given
+    Fish data.
+
+    Args:
+        population (dict[int, int]): Each fish type with their total amount
+        days (int): [description]Number of days to simulate.
+
+    Returns:
+        int: Population after n days.
+    """
+
     for _ in range(days):
         population_after_n = defaultdict(int)
         for age, amount in population.items():
@@ -130,3 +134,6 @@ if __name__ == "__main__":
 
 print(f"# Part 1: {main(data, 80)}")
 print(f"# Part 2: {main(data, 256)}")
+
+# Part 1: 352872
+# Part 2: 1604361182149
