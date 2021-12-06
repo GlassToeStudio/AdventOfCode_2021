@@ -107,22 +107,10 @@ def format_data(in_file: TextIOWrapper) -> list[int]:
         list[int]: input data as list[str]
     """
 
-    return [int(x.strip()) for x in in_file.read().split(',')]
+    return Counter([int(x.strip()) for x in in_file.read().split(',')])
 
 
-def part_1(population, days):
-    population = population.copy()
-    for _ in range(days):
-        for i in range(len(population)):
-            if population[i] == 0:
-                population[i] = 7
-                population.append(8)
-            population[i] -= 1
-        # print(f"After  {j + 1} day:  {data}")
-    return len(population)
-
-
-def part_2(population, days):
+def main(population, days):
     population = Counter(population)
     for _ in range(days):
         population_after_n = defaultdict(int)
@@ -140,5 +128,5 @@ if __name__ == "__main__":
     with open("Day_06/input.txt", 'r', encoding='utf-8') as f:
         data = format_data(f)
 
-print(f"# Part 1: {part_1(data, 80)}")
-print(f"# Part 2: {part_2(data, 256)}")
+print(f"# Part 1: {main(data, 80)}")
+print(f"# Part 2: {main(data, 256)}")
