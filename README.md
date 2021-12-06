@@ -145,7 +145,7 @@ Find the last winning bingo board to insure the giant squid wins.
 <details>
 <summary><b>Day 5: Hydrothermal Venture</b></summary>
 <p>
-Write this
+Given a set of line segments as two points, graph each line segment.
 
 ```
 0,9 -> 5,9
@@ -161,10 +161,10 @@ Write this
 ```
 
 ### Part 1:
-Write this
+Graph each point the line segment covers. Find all areas that have at least 1 overlap. Only consider horizontal and vertical lines.
 
 ### Part 2:
-
+Graph each point the line segment covers. Find all areas that have at least 1 overlap. Consider horizontal, vertical lines and diagnoanl lines..
 
 <p align="center">
 <img src="https://github.com/GlassToeStudio/AdventOfCode_2021/blob/master/Day_05/day_05_vis_large.png" width="50%" height="50%"
@@ -178,7 +178,7 @@ Write this
 <details>
 <summary><b>Day 6: Lanternfish</b></summary>
 <p>
-Overall description
+Fish everywhere. Given a set of data: a list of numbers, each number represents how long until the fish reproduces. A fish reproduces once every 7 days. New born fish take 8 days for their first offspring. Find the number of fish after n days.
 
 ```
 Initial state: 3,4,3,1,2
@@ -203,10 +203,11 @@ After 18 days: 6,0,6,4,5,6,0,1,1,2,6,0,1,1,1,2,2,3,3,4,6,7,8,8,8,8
 ```
 
 ### Part 1:
-Part 1 description
+Find a way to simulate lanternfish. How many lanternfish would there be after
+80 days?
 
 ### Part 2:
-Part 2 description
+How many lanternfish would there be after 256 days?
 
 </p>
 </details>
