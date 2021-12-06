@@ -1,4 +1,6 @@
 """
+
+
 --- Day 6: Lanternfish ---
 The sea floor is getting steeper. Maybe the sleigh keys got carried this way?
 A massive school of glowing lanternfish swims past. They must spawn quickly to
@@ -72,9 +74,26 @@ there would be a total of 5934.
 
 Find a way to simulate lanternfish. How many lanternfish would there be after
 80 days?
+
+
+Your puzzle answer was 352872.The first half of this puzzle is complete! It
+provides one gold star: *
+
+
+
+--- Part Two ---
+Suppose the lanternfish live forever and have unlimited food and space. Would
+they take over the entire ocean?
+
+After 256 days in the example above, there would be a total of 26984457539
+lanternfish!
+
+How many lanternfish would there be after 256 days?
 """
 
 
+import math
+from collections import Counter, defaultdict
 from io import TextIOWrapper
 
 
@@ -92,6 +111,7 @@ def format_data(in_file: TextIOWrapper) -> list[int]:
 
 
 def part_1(population, days):
+    population = population.copy()
     for _ in range(days):
         for i in range(len(population)):
             if population[i] == 0:
@@ -102,9 +122,23 @@ def part_1(population, days):
     return len(population)
 
 
+def part_2(population, days):
+    population = Counter(population)
+    for _ in range(days):
+        population_after_n = defaultdict(int)
+        for age, amount in population.items():
+            if age == 0:
+                population_after_n[6] += amount
+                population_after_n[8] += amount
+            else:
+                population_after_n[age - 1] += amount
+        population = population_after_n
+    return(sum(population.values()))
+
+
 if __name__ == "__main__":
     with open("Day_06/input.txt", 'r', encoding='utf-8') as f:
         data = format_data(f)
-    print(f"# Part 1: {part_1(data, 80)}")
 
-# Part 1: 352872
+print(f"# Part 1: {part_1(data, 80)}")
+print(f"# Part 2: {part_2(data, 256)}")
