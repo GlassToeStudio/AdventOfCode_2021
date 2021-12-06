@@ -54,3 +54,5 @@ test.py
 a.py
 a
 sample.txt
+Day_05/images/*.png
+Day_05/images/gif/*.gif
