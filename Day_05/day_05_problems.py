@@ -98,7 +98,7 @@ from io import TextIOWrapper
 from PIL import Image
 
 
-def enlarge_image(image: Image, width: int, height: int,  base: int = 512) -> Image:            # VIS: THis is only for makeing an image!
+def enlarge_image(image: Image, width: int, height: int,  base: int = 512) -> Image:            # VIS: This is only for makeing an image!
     """Resize and image to scale with maximum base value.
     If base value < image dimensions, image is not resized.
 
@@ -116,7 +116,7 @@ def enlarge_image(image: Image, width: int, height: int,  base: int = 512) -> Im
     return image.resize((int(width * scale), int(height * scale)), Image.ANTIALIAS)
 
 
-def make_png(diagram: list[list[int]], i) -> None:                                              # VIS: THis is only for makeing an image!
+def make_png(diagram: list[list[int]], i) -> None:                                              # VIS: This is only for makeing an image!
     """Generate am image of the given diagram.
 
     Args:
@@ -125,11 +125,11 @@ def make_png(diagram: list[list[int]], i) -> None:                              
 
     image = Image.new('RGB', (len(diagram[0]), len(diagram)),  (0, 0, 0))
     pixels = image.load()
-    for col in range(len(diagram)):
-        for row in range(len(diagram[0])):
-            cell_color = (diagram[col][row] * 90, 10, 10)
-            pixels[col, row] = cell_color
-    # image = enlarge_image(image, len(diagram[0]), len(diagram), base=4096)
+    for c_i, column in enumerate(diagram):
+        for r_i, row in enumerate(column):
+            cell_color = (row * 90, 10, 10)
+            pixels[c_i, r_i] = cell_color
+    # image = enlarge_image(image, len(diagram[0]), len(diagram), base=4096)                    # VIS: This is only for makeing an image!
     filepath = (f'Day_05/images/image_{i}.png')
     image.save(filepath)
 
@@ -176,7 +176,7 @@ def make_diagram(initial_data: list[list[int]]) -> list[list[int]]:
     return diagram
 
 
-def mark_horizontal_vertical_points(points: list[int], diagram: list[list[int]], i) -> list[list[int]]:  # VIS: THis is only for makeing an image! (the *** i *** specifically)
+def mark_horizontal_vertical_points(points: list[int], diagram: list[list[int]], i) -> list[list[int]]:  # VIS: This is only for makeing an image! (the *** i *** specifically)
     """For the given list of 4 points (x1, y1, x2, y2) line segment,
     add 1 to each point in the diagram the line segments include.
 
@@ -195,20 +195,20 @@ def mark_horizontal_vertical_points(points: list[int], diagram: list[list[int]],
 
     # Horizontal
     if x_1 == x_2:
-        i += 1                                                                                  # VIS: THis is only for makeing an image! (the *** i *** specifically)
+        i += 1                                                                                  # VIS: This is only for makeing an image! (the *** i *** specifically)
         y_min, y_max = min(y_1, y_2), max(y_1, y_2) + 1
         for y_i in range(y_min, y_max):
             diagram[y_i][x_1] += 1
     # Vertical
     if y_1 == y_2:
-        i += 1                                                                                  # VIS: THis is only for makeing an image! (the *** i *** specifically)
+        i += 1                                                                                  # VIS: This is only for makeing an image! (the *** i *** specifically)
         x_min, x_max = min(x_1, x_2), max(x_1, x_2) + 1
         for x_i in range(x_min, x_max):
             diagram[y_1][x_i] += 1
-    return diagram, i                                                                           # VIS: THis is only for makeing an image! (the *** i *** specifically)
+    return diagram, i                                                                           # VIS: This is only for makeing an image! (the *** i *** specifically)
 
 
-def mark_diagonal_points(points: list[int], diagram: list[list[int]], i) -> list[list[int]]:    # VIS: THis is only for makeing an image! (the *** i *** specifically)
+def mark_diagonal_points(points: list[int], diagram: list[list[int]], i) -> list[list[int]]:    # VIS: This is only for makeing an image! (the *** i *** specifically)
     """For the given list of 4 points (x1, y1, x2, y2) line segment,
     add 1 to each point in the diagram the line segments include.
 
@@ -233,14 +233,14 @@ def mark_diagonal_points(points: list[int], diagram: list[list[int]], i) -> list
         slope = 0
 
     if slope == 1:
-        i += 1                                                                                  # VIS: THis is only for makeing an image! (the *** i *** specifically)
+        i += 1                                                                                  # VIS: This is only for makeing an image! (the *** i *** specifically)
         for _ in range(0, x_max - x_min + 1):
             diagram[y_min + _][x_min + _] += 1
     elif slope == -1:
-        i += 1                                                                                  # VIS: THis is only for makeing an image! (the *** i *** specifically)
+        i += 1                                                                                  # VIS: This is only for makeing an image! (the *** i *** specifically)
         for _ in range(0, x_max - x_min + 1):
             diagram[y_max - _][x_min + _] += 1
-    return diagram, i                                                                           # VIS: THis is only for makeing an image! (the *** i *** specifically)
+    return diagram, i                                                                           # VIS: This is only for makeing an image! (the *** i *** specifically)
 
 
 def find_dangerous_areas(diagram: list[list[int]]) -> int:
@@ -273,11 +273,11 @@ def main(line_segments: list[list[int]]) -> tuple[int, int]:
     """
 
     diagram = make_diagram(line_segments)
-    i = -1                                                                                      # VIS: THis is only for makeing an image! (the *** i *** specifically)
+    i = -1                                                                                      # VIS: This is only for makeing an image! (the *** i *** specifically)
     for points in line_segments:
-        diagram, i = mark_horizontal_vertical_points(points, diagram, i)                        # VIS: THis is only for makeing an image! (the *** i *** specifically)
-        diagram, i = mark_diagonal_points(points, diagram, i)                                   # VIS: THis is only for makeing an image! (the *** i *** specifically)
-        make_png(diagram, i)                                                                    # VIS: THis is only for makeing an image! (the *** i *** specifically)
+        diagram, i = mark_horizontal_vertical_points(points, diagram, i)                        # VIS: This is only for makeing an image! (the *** i *** specifically)
+        diagram, i = mark_diagonal_points(points, diagram, i)                                   # VIS: This is only for makeing an image! (the *** i *** specifically)
+        make_png(diagram, i)                                                                    # VIS: This is only for makeing an image! (the *** i *** specifically)
     part_1 = find_dangerous_areas(diagram)
 
     for points in line_segments:
@@ -290,9 +290,9 @@ if __name__ == "__main__":
     with open("Day_05/input.txt", "r", encoding="utf-8") as f:
         data = format_data(f)
 
-    p1, p2 = main(data)
-    print(f"Part 1: {p1:5}")
-    print(f"Part 2: {p2:5}")
+p1, p2 = main(data)
+print(f"Part 1: {p1:5}")
+print(f"Part 2: {p2:5}")
 
 # Part 1:  6572
 # Part 2: 21466

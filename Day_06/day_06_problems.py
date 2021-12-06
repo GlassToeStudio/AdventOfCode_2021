@@ -132,8 +132,8 @@ if __name__ == "__main__":
     with open("Day_06/input.txt", 'r', encoding='utf-8') as f:
         data = format_data(f)
 
-print(f"# Part 1: {main(data, 80)}")
-print(f"# Part 2: {main(data, 256)}")
+print(f"# Part 1: {main(data, 80):13}")
+print(f"# Part 2: {main(data, 256):13}")
 
 # Part 1: 352872
 # Part 2: 1604361182149
