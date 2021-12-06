@@ -34,6 +34,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument("day", help="Enter the day for the problem you are working on.")  # noqa: E501
     parser.add_argument("-i", "--input", help="Create the input file.", action="store_true")  # noqa: E501
     parser.add_argument("-p", "--python", help="Create the python template.", action="store_true")  # noqa: E501
+    parser.add_argument("-r", "--readme", help="Populate readme with tempalte data.", action="store_true")  # noqa: E501
     return parser.parse_args()
 
 
@@ -247,6 +248,7 @@ def main():
 
     day = fix_day(args.day)
     try_make_dir(day)
+    title = ''
 
     if args.input:
         input_data = get_input_data(aoc_url, session_id)
@@ -255,6 +257,11 @@ def main():
         instruction_data = get_instruction_data(aoc_url, session_id)
         instructions, title = format_instruction_text(instruction_data)
         make_python_file(day, instructions)
+    if args.readme:
+        if title == '':
+            print(f"{YELLOW}{BOLD}title is blank, getting instructions.{END}")
+            instruction_data = get_instruction_data(aoc_url, session_id)
+            instructions, title = format_instruction_text(instruction_data)
         update_readme(title)
 
 
