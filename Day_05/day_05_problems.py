@@ -95,6 +95,8 @@ Consider all of the lines. At how many points do at least two lines overlap?
 
 from io import TextIOWrapper
 
+from PIL import Image
+
 
 def format_data(in_file: TextIOWrapper) -> list[list[int]]:
     """Return a list of int from the given text."
@@ -108,6 +110,42 @@ def format_data(in_file: TextIOWrapper) -> list[list[int]]:
 
     _ = [int(z) for x in in_file.readlines() for y in x.strip().replace(" -> ", ",").split() for z in y.split(",")]
     return [_[i: i + 4] for i in range(0, len(_), 4)]
+
+
+def enlarge_image(image: Image, width: int, height: int,  base: int = 512) -> Image:
+    """Resize and image to scale with maximum base value.
+    If base value < image dimensions, image is not resized.
+
+    Args:
+        image (Imgae): image to resize
+        width (int): width of image
+        height (int): height of image
+        base (int, optional): max image size. Defaults to 512.
+
+    Returns:
+        Image: the enlarged image
+    """
+
+    scale = max(width, height, base) / max(width, height)
+    return image.resize((int(width * scale), int(height * scale)), Image.ANTIALIAS)
+
+
+def make_png(diagram: list[list[int]]) -> None:
+    """Generate am image of the given diagram.
+
+    Args:
+        diagram (list[list[int]]): The diagram
+    """
+
+    image = Image.new('RGB', (len(diagram[0]), len(diagram)),  (0, 0, 0))
+    pixels = image.load()
+    for y in range(len(diagram)):
+        for x in range(len(diagram[0])):
+            c = (diagram[y][x] * 90, 10, 10)
+            pixels[y, x] = c
+    image = enlarge_image(image, len(diagram[0]), len(diagram), base=4096)
+    filepath = ('Day_05/image.png')
+    image.save(filepath)
 
 
 def print_diagram(diagram: list[list[int]]) -> None:
@@ -239,6 +277,9 @@ def main(line_segments: list[list[int]]) -> tuple[int, int]:
     for points in line_segments:
         diagram = mark_diagonal_points(points, diagram)
     part_2 = find_dangerous_areas(diagram)
+
+    make_png(diagram)
+
     return part_1, part_2
 
 
