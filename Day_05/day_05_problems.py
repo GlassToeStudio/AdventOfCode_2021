@@ -276,7 +276,7 @@ def main(line_segments: list[list[int]]) -> tuple[int, int]:
     i = -1                                                                                      # VIS: This is only for makeing an image! (the *** i *** specifically)
     for points in line_segments:
         diagram, i = mark_horizontal_vertical_points(points, diagram, i)                        # VIS: This is only for makeing an image! (the *** i *** specifically)
-        #                                                                                       # VIS: For anmimated gif, put diagram, i = mark_diagonal_points(points, diagram, i) here too. then call make_png(diagram, i)
+        # noqa E501                                                                             # VIS: For anmimated gif, put diagram, i = mark_diagonal_points(points, diagram, i) here too. then call make_png(diagram, i)
         # make_png(diagram, i)                                                                  # VIS: This is only for makeing an image! (the *** i *** specifically)
     part_1 = find_dangerous_areas(diagram)
 
