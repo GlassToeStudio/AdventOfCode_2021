@@ -92,11 +92,31 @@ Figure out which board will win last. Once it wins, what would its final score
 be?
 """
 
-
+import sys
 from io import TextIOWrapper
+from os import system
+
+#                                                               # VIS: This is only for makeing an image!
+from colors import BLINK_OFF, END, HIDE, START, UP
+
+BALL = "🔴"                                                     # VIS: This is only for makeing an image!
+SPECIAL_BALL = "🔵"                                             # VIS: This is only for makeing an image!
 
 
-def print_winning_board(board: list[int]) -> None:
+def change_winning_baord(board: list[int]) -> list[int]:        # VIS: This is only for makeing an image!
+    """Change the colors of the marked spots on in the board.
+
+    Args:
+        board (list[int]): initial marked board
+
+    Returns:
+        list[int]: modified marked board
+    """
+
+    return [SPECIAL_BALL if x == BALL else x for x in board]
+
+
+def print_one_board(board: list[int]) -> None:                  # VIS: This is only for makeing an image!
     """Print the board
 
     Args:
@@ -106,11 +126,36 @@ def print_winning_board(board: list[int]) -> None:
     print()
     for i in range(0, 25, 5):
         for j in range(5):
-            if board[i+j] == "🔵":
-                print(f"{board[i+j]}", end=' ')
+            if board[i+j] == BALL:
+                print(f"{BALL}", end=' ')
             else:
-                print(f"{board[i+j]:2}", end=' ')
+                print(f"{OTHER_BALL}", end=' ')
         print('\n')
+
+
+def print_all_boards(boards: list[list[int]]) -> None:          # VIS: This is only for makeing an image!
+    """Print all boards to the terminal.
+
+    Args:
+        boards (list[list[int]]): The boards to print.
+    """
+
+    sys.stdout.write(f"{BLINK_OFF}{START}{UP*80}")
+    output = '\n\n'
+    for boards_m in range(0, 100, 10):
+        for rows_k in range(0, 25, 5):
+            for board_j in range(boards_m, 10+boards_m):
+                for ball_i in range(rows_k, 5+rows_k):
+                    if boards[board_j][ball_i] == BALL:
+                        output += (f" {BALL}")
+                    elif boards[board_j][ball_i] == SPECIAL_BALL:
+                        output += (f" {SPECIAL_BALL}")
+                    else:
+                        output += (f"{boards[board_j][ball_i]:3}")
+                output += " "
+            output += "\n"
+        output += (f"{HIDE}{END}")
+    sys.stdout.write(output)
 
 
 def format_data(in_file: TextIOWrapper) -> list[str]:
@@ -152,8 +197,9 @@ def parse_boards(board_data: list[str]) -> list[list[int]]:
     """
 
     boards = []
-    for i in range(0, len(board_data) - 1, 6):
+    for i in range(0, len(board_data)-1, 6):
         boards.append([int(y) for x in board_data[i:i + 5] for y in x.split()])
+
     return boards
 
 
@@ -170,7 +216,7 @@ def place_ball(ball: int, board: list[int]) -> list[int]:
         list[int]: Modified board denoting marked values
     """
 
-    return ["🔵" if x == ball else x for x in board]
+    return [BALL if x == ball else x for x in board]                # VIS: This is only for makeing an image! (BALL could be anything else.)
 
 
 def check_rows(board: list[int]) -> bool:
@@ -186,7 +232,7 @@ def check_rows(board: list[int]) -> bool:
     """
 
     for i in range(0, 25, 5):
-        total = sum(1 for x in board[i: i + 5] if x == "🔵") == 5
+        total = sum(1 for x in board[i: i + 5] if x == BALL) == 5
         if total:
             return True
     return False
@@ -205,7 +251,7 @@ def check_columns(board: list[int]) -> bool:
     """
 
     for i in range(0, 5):
-        total = sum(1 for j in range(0, 25, 5) if board[i + j] == "🔵") == 5
+        total = sum(1 for j in range(0, 25, 5) if board[i + j] == BALL) == 5
         if total:
             return True
     return False
@@ -223,7 +269,7 @@ def calc_solution(winning_ball: int, winning_board: list[int]) -> int:
         int: final value for winning
     """
 
-    return sum(x for x in winning_board if x != "🔵") * winning_ball
+    return sum(x for x in winning_board if (x != BALL and x != SPECIAL_BALL)) * winning_ball     # VIS: This is only for makeing an image! BALL should be 0
 
 
 def main(input_data: list[str]) -> tuple[int, int]:
@@ -237,7 +283,7 @@ def main(input_data: list[str]) -> tuple[int, int]:
     Returns:
         tuple[int, int]: winning values for 1st and last winners
     """
-
+    first_winner = False                                            # VIS: This is only for makeing an image!
     winners = []
     w_ball = []
     balls = parse_balls(input_data)
@@ -247,11 +293,17 @@ def main(input_data: list[str]) -> tuple[int, int]:
             if j in winners:
                 continue
             boards[j] = place_ball(ball, boards[j])
+            print_all_boards(boards)                                # VIS: This is only for makeing an image!
             if check_rows(boards[j]) or check_columns(boards[j]):
+                if not first_winner:                                # VIS: This is only for makeing an image!
+                    boards[j] = change_winning_baord(boards[j])     # VIS: This is only for makeing an image!
+                    first_winner = True                             # VIS: This is only for makeing an image!
                 winners.append(j)
                 w_ball.append(ball)
                 continue
-    print_winning_board(boards[winners[0]])
+    # print_one_board(boards[winners[0]])
+    boards[winners[-1]] = change_winning_baord(boards[winners[-1]])
+    print_all_boards(boards)                                        # VIS: This is only for makeing an image!
     return (calc_solution(w_ball[0], boards[winners[0]]),
             calc_solution(w_ball[-1], boards[winners[-1]]))
 
@@ -259,10 +311,10 @@ def main(input_data: list[str]) -> tuple[int, int]:
 if __name__ == "__main__":
     with open("Day_04/input.txt", 'r', encoding='utf-8') as f:
         data = format_data(f)
-
+    _ = system('cls')                                               # VIS: This is only for makeing an image!
     p1, p2 = main(data)
-    print(f"Part 1: {p1}")
-    print(f"Part 2: {p2}")
+    print(f"Part 1: {p1:5}")
+    print(f"Part 2: {p2:5}")
 
 # Part 1: 23177
 # Part 2: 6804
