@@ -102,7 +102,7 @@ def format_instruction_text(html_text: str) -> str:
     # Save the text and format it.
     # Not sure why it differs so much after saving and reading
     # back from a file versus just doing html_text.split('\n')[18:-11]
-    with open("temp", "a+", encoding="utf-8") as python_file:
+    with open("temp", "a+", encoding="utf-8") as temp_file:
         max_line_length = 79
         instructions = []
 
@@ -121,9 +121,9 @@ def format_instruction_text(html_text: str) -> str:
 
         # TODO: Prefer to format the html_text directly and not
         # write to, and read back from, a file.
-        python_file.write(html_text)
-        python_file.seek(0)  # back to the beginning.
-        lines = python_file.readlines()[18:-11]  # Cut out the junk.
+        temp_file.write(html_text)
+        temp_file.seek(0)  # back to the beginning.
+        lines = temp_file.readlines()[18:-11]  # Cut out the junk.
 
         # Break the lines up such that they are never longer
         # than MAX_LINE_LENGTH, for pep8
