@@ -1,6 +1,4 @@
 """
-
-
 --- Day 7: The Treachery of Whales ---
 A giant whale has decided your submarine is its next meal, and it's much faster
 than you are. There's nowhere to run!
@@ -50,6 +48,37 @@ Determine the horizontal position that the crabs can align to using the least
 fuel possible. How much fuel must they spend to align to that position?
 
 
+--- Part Two ---
+The crabs don't seem interested in your proposed solution. Perhaps you
+misunderstand crab engineering?
+
+As it turns out, crab submarine engines don't burn fuel at a constant rate.
+Instead, each change of 1 step in horizontal position costs 1 more unit of
+fuel than the last: the first step costs 1, the second step costs 2, the third
+step costs 3, and so on.
+
+As each crab moves, moving further becomes more expensive. This changes the
+best horizontal position to align them all on; in the example above, this
+becomes 5:
+
+
+Move from 16 to 5: 66 fuel
+Move from 1 to 5: 10 fuel
+Move from 2 to 5: 6 fuel
+Move from 0 to 5: 15 fuel
+Move from 4 to 5: 1 fuel
+Move from 2 to 5: 6 fuel
+Move from 7 to 5: 3 fuel
+Move from 1 to 5: 10 fuel
+Move from 2 to 5: 6 fuel
+Move from 14 to 5: 45 fuel
+
+This costs a total of 168 fuel. This is the new cheapest possible outcome; the
+old alignment position (2) now costs 206 fuel instead.
+
+Determine the horizontal position that the crabs can align to using the least
+fuel possible so they can make you an escape route! How much fuel must they
+spend to align to that position?
 """
 
 
@@ -57,33 +86,68 @@ from collections import defaultdict
 from io import TextIOWrapper
 
 
-def format_data(in_file: TextIOWrapper) -> list[str]:
-    """Return a list of str from the given text."
+def format_data(in_file: TextIOWrapper) -> list[int]:
+    """Return a list of int from the given text."
 
     Args:
         in_file (TextIOWrapper): text file
 
     Returns:
-        list[str]: input data as list[str]
+        list[int]: input data as list[int]
     """
 
-    return [int(x) for x in in_file.read().split(',')]
+    return [int(x) for x in in_file.read().split(",")]
+
+
+def align_subs_1_cost(sub_locations: list[int]) -> int:
+    """Determine the horizontal position that the crabs
+    can align to using the least fuel possible. Each step
+    cost 1 fuel.
+
+    Args:
+        sub_locations (list[int]): The current location of each sub
+
+    Returns:
+        int: least amount of fuel to align all subs
+    """
+
+    totals = defaultdict(int)
+    for i, sub_loc in enumerate(sub_locations):
+        for target_loc in sub_locations:
+            totals[i] += abs(sub_loc - target_loc)
+    return min(totals.values())
+
+
+def align_subs_n_cost(sub_locations: list[int]) -> int:
+    """Determine the horizontal position that the crabs
+    can align to using the least fuel possible. Each step
+    increases fuel cost by 1.
+    The first step costs 1,
+    the second step costs 2,
+    the third step costs 3, and so on.
+
+    Args:
+        sub_locations (list[int]): The current location of each sub
+
+    Returns:
+        int: least amount of fuel to align all subs
+    """
+
+    totals = defaultdict(int)
+    for target in range(sub_locations[-1]):
+        for sub_loc in sub_locations:
+            cost = abs(target - sub_loc)
+            totals[target] += cost * (cost + 1) // 2
+    return min(totals.values())
 
 
 if __name__ == "__main__":
-    with open("Day_07/input.txt", 'r', encoding='utf-8') as f:
+    with open("Day_07/input.txt", "r", encoding="utf-8") as f:
         data = format_data(f)
-        totals = defaultdict(int)
-        for i in range(len(data)):
-            for j in range(len(data)):
-                totals[i] += (abs(data[i] - data[j]))
-        least_cost = min(totals.values())
-        print(least_cost)
+        data.sort()
 
-        totals = defaultdict(int)
-        for i in range(max(data)):
-            for j in range(len(data)):
-                n = abs(i - data[j])
-                totals[i] += n*(n + 1)//2
-        least_cost = min(totals.values())
-        print(least_cost)
+    print(f"# Part 1: {align_subs_1_cost(data):8}")
+    print(f"# Part 2: {align_subs_n_cost(data):8}")
+
+# Part 1:   347011
+# Part 2: 98363777
