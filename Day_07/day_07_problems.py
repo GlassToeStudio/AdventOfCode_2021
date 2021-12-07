@@ -79,3 +79,11 @@ if __name__ == "__main__":
                 totals[i] += (abs(data[i] - data[j]))
         least_cost = min(totals.values())
         print(least_cost)
+
+        totals = defaultdict(int)
+        for i in range(max(data)):
+            for j in range(len(data)):
+                n = abs(i - data[j])
+                totals[i] += n*(n + 1)//2
+        least_cost = min(totals.values())
+        print(least_cost)
