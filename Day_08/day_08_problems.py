@@ -1,6 +1,4 @@
 """
-
-
 --- Day 8: Seven Segment Search ---
 You barely reach the safety of the cave when the whale smashes into the cave
 mouth, collapsing it. Sensors indicate another exit to this cave at a much
@@ -105,10 +103,71 @@ unique number of segments (highlighted above).
 
 In the output values, how many times do digits 1, 4, 7, or 8 appear?
 
+
+--- Part Two ---
+Through a little deduction, you should now be able to determine the remaining
+digits. Consider again the first example above:
+
+acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab |
+cdfeb fcadb cdfeb cdbaf
+After some careful analysis, the mapping between signal wires and segments only
+make sense in the following configuration:
+
+ dddd
+e    a
+e    a
+ ffff
+g    b
+g    b
+ cccc
+
+So, the unique signal patterns would correspond to the following digits:
+
+acedgfb: 8
+cdfbe: 5
+gcdfa: 2
+fbcad: 3
+dab: 7
+cefabd: 9
+cdfgeb: 6
+eafb: 4
+cagedb: 0
+ab: 1
+
+Then, the four digits of the output value can be decoded:
+
+cdfeb: 5
+fcadb: 3
+cdfeb: 5
+cdbaf: 3
+
+Therefore, the output value for this entry is 5353.
+Following this same process for each entry in the second, larger example above,
+the output value of each entry can be determined:
+
+
+fdgacbe cefdb cefbgd gcbe: 8394
+fcgedb cgb dgebacf gc: 9781
+cg cg fdcagb cbg: 1197
+efabcd cedba gadfec cb: 9361
+gecf egdcabf bgf bfgea: 4873
+gebdcfa ecba ca fadegcb: 8418
+cefg dcbef fcge gbcadfe: 4548
+ed bcgafe cdgba cbgef: 1625
+gbdfcae bgc cg cgb: 8717
+fgae cfgab fg bagce: 4315
+
+Adding all of the output values in this larger example produces 61229.
+For each entry, determine all of the wire/segment connections and decode the
+four-digit output values. What do you get if you add up all of the output
+values?
 """
 
 
 from io import TextIOWrapper
+
+UNIQUES = {2: "1", 3: "7", 4: "4", 7: "8"}
+CYPHER = {(2, 3, 6): "0", (1, 2, 5): "2", (2, 3, 5): "3", (1, 3, 5): "5", (1, 3, 6): "6", (2, 4, 6): "9"}
 
 
 def format_data(in_file: TextIOWrapper) -> list[str]:
@@ -121,16 +180,101 @@ def format_data(in_file: TextIOWrapper) -> list[str]:
         list[str]: input data as list[str]
     """
 
-    return [z.strip() for x in in_file.readlines() for y in x.split(' | ')[1::2] for z in y.split()]
+    return in_file.readlines()
 
 
-def part1(output_values):
-    uniques = [2, 3, 4, 7]
+def find_digit(signals: list[str], length: int) -> str:
+    """Find the signal in the list that has the same length
+    as the passed in value.
 
-    return sum(1 for x in output_values if len(x) in uniques)
+    Only useful for 1, 4, 7, 8 which have unique lengths.
+
+    Args:
+        signals (list[str]): list of signals in which to search
+        length (int): length of the digit to find.
+
+    Returns:
+        int: the found sequence representing a digit.
+    """
+
+    return [x for x in signals if len(x) == length][0]
+
+
+def like_digit(find: str, digit: str) -> int:
+    """Return the number of similarities between the find
+    string and the digit string.
+
+    Args:
+        find (str): The sequence representing the number to find
+        digit (str): The sequence representing where to search.
+
+    Returns:
+        int: Number of similarities between find and digit.
+    """
+
+    return sum(1 for n in digit if n in find)
+
+
+def part1(pattern_output: list[str]) -> int:
+    """Find the sum of the number of digits with a unique length.
+    i.e. How many 1, 4, 7, and 8 are there.
+
+    Search in only the digital output value of the data.
+    (unique signal pattern | digital output value)
+
+    Args:
+        pattern_output (list[str]): List of signals and digtis.
+
+    Returns:
+        int: total occurances of 1, 4, 7, 8
+    """
+
+    digital = [z.strip() for x in pattern_output for y in x.split(' | ')[1::2] for z in y.split()]
+    return sum(1 for x in digital if len(x) in UNIQUES)
+
+
+def part2(pattern_output: list[str]) -> int:
+    """Decipher the digital output values of the given data.
+    (unique signal pattern | digital output value)
+
+    Each output represents a 4 digit number. Sum the total
+    of all digital ouputs.
+
+    Args:
+        pattern_output (list[str]): List of signals and digtis.
+
+    Returns:
+        int: Sum of all output values
+    """
+
+    total = 0
+    for line in pattern_output:
+        answers = [""]*4
+        _s, _d = line.strip().split(' | ')
+        signal = _s.split()
+        digital = _d.split()
+
+        one = find_digit(signal, 2)
+        four = find_digit(signal, 4)
+
+        # Go ahead and check the
+        for i, signal in enumerate(digital):
+            if len(signal) in UNIQUES:
+                answers[i] = UNIQUES[len(signal)]
+
+        for i, answer in enumerate(answers):
+            if answer == "":
+                answers[i] = CYPHER[(like_digit(one, digital[i]), like_digit(four, digital[i]), len(digital[i]))]
+        total += int("".join(answers))
+    return total
 
 
 if __name__ == "__main__":
     with open("Day_08/input.txt", 'r', encoding='utf-8') as f:
         data = format_data(f)
-        print(part1(data))
+    print(f"# Part 1: {part1(data):6}")
+    print(f"# Part 2: {part2(data):6}")
+
+
+# Part 1:    318
+# Part 2: 996280
