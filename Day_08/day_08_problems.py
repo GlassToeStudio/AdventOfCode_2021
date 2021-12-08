@@ -166,11 +166,11 @@ values?
 
 from io import TextIOWrapper
 
-UNIQUES = {2: "1", 3: "7", 4: "4", 7: "8"}
+UNIQUES: dict[int, str] = {2: "1", 3: "7", 4: "4", 7: "8"}
 """Dictionary of {length : digit} for the 4 unique digits"""
 
-CYPHER = {(2, 3, 6): "0", (1, 2, 5): "2", (2, 3, 5): "3", (1, 3, 5): "5", (1, 3, 6): "6", (2, 4, 6): "9"}
-"""Dictionary of {tuple : digit} for the remaining 6 values. The tupel is 1 & digit, 4 & digit, len(digit)) """
+CYPHER: dict[tuple[int, int, int], str] = {(2, 3, 6): "0", (1, 2, 5): "2", (2, 3, 5): "3", (1, 3, 5): "5", (1, 3, 6): "6", (2, 4, 6): "9"}
+"""Dictionary of {tuple : digit} for the remaining 6 values. The tuple is 1 & digit, 4 & digit, len(digit)) """
 
 
 def format_data(in_file: TextIOWrapper) -> list[str]:
@@ -226,13 +226,13 @@ def part1(pattern_output: list[str]) -> int:
     (unique signal pattern | digital output value)
 
     Args:
-        pattern_output (list[str]): List of signals and digtis.
+        pattern_output (list[str]): List of signals and digits.
 
     Returns:
-        int: total occurances of 1, 4, 7, 8
+        int: total occurrences of 1, 4, 7, 8
     """
 
-    digital = [z.strip() for x in pattern_output for y in x.split(' | ')[1::2] for z in y.split()]
+    digital = [z.strip() for x in pattern_output for y in x.split(" | ")[1::2] for z in y.split()]
     return sum(1 for x in digital if len(x) in UNIQUES)
 
 
@@ -241,10 +241,10 @@ def part2(pattern_output: list[str]) -> int:
     (unique signal pattern | digital output value)
 
     Each output represents a 4 digit number. Sum the total
-    of all digital ouputs.
+    of all digital outputs.
 
     Args:
-        pattern_output (list[str]): List of signals and digtis.
+        pattern_output (list[str]): List of signals and digits.
 
     Returns:
         int: Sum of all output values
@@ -252,12 +252,12 @@ def part2(pattern_output: list[str]) -> int:
 
     total = 0
     for line in pattern_output:
-        answers = [""]*4
-        _s, _d = line.strip().split(' | ')
+        answers = [None] * 4
+        _s, _d = line.strip().split(" | ")
         signal = _s.split()
         digital = _d.split()
 
-        # We can use 1 adn 4 to decipher the raminaing numbers.
+        # We can use 1 and 4 to decipher the remaining numbers.
         one = find_digit(signal, 2)
         four = find_digit(signal, 4)
 
@@ -268,18 +268,18 @@ def part2(pattern_output: list[str]) -> int:
                 answers[i] = UNIQUES[len(signal)]
 
         # If we have not already found all 4 digital values
-        # decipher each remainign value by comaring it to 1
+        # decipher each remaining value by comparing it to 1
         # and 4 every remaining number (0, 2, 3, 5, 6, 9) has
         # a unique similarity to 1 and 4 long with its length.
         for i, answer in enumerate(answers):
-            if answer == "":
+            if answer is None:
                 answers[i] = CYPHER[(like_digit(one, digital[i]), like_digit(four, digital[i]), len(digital[i]))]
         total += int("".join(answers))
     return total
 
 
 if __name__ == "__main__":
-    with open("Day_08/input.txt", 'r', encoding='utf-8') as f:
+    with open("Day_08/input.txt", "r", encoding="utf-8") as f:
         data = format_data(f)
     print(f"# Part 1: {part1(data):6}")
     print(f"# Part 2: {part2(data):6}")
