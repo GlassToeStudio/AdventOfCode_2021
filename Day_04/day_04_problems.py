@@ -93,11 +93,37 @@ be?
 """
 
 import sys
+import time
 from io import TextIOWrapper
 from os import system
 
 #                                                               # VIS: This is only for makeing an image!
-from colors import BLINK_OFF, END, HIDE, START, UP
+from colors import BLACK_BR, BLINK_OFF, END, HOME, INV, RED
+
+#                                                               # VIS: This is only for makeing an image!
+NEW_LINE = "\n"
+TAB = "\t"
+SQUID = (" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+         rf"{TAB*3}                       {RED}                       ___                              {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                       {RED}                    .-'   `'.                           {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                       {RED}                   /         \                          {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                       {RED}                   |         ;                          {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}     ______     _____  {RED}                   |         |           ___.--,        {BLACK_BR}    _____      ____   {NEW_LINE}"
+         rf"{TAB*3}    (_   _ \   (_   _) {RED}          _.._     |0) ~ (0) |    _.---'`__.-( (_.      {BLACK_BR}   / ___ \    / __ \  {NEW_LINE}"
+         rf"{TAB*3}      ) (_) )    | |   {RED}   __.--'`_.. '.__.\    '--. \_.-' ,.--'`     `\"\"`    {BLACK_BR}  / /   \_)  / /  \ \ {NEW_LINE}"
+         rf"{TAB*3}      \   _/     | |   {RED}  ( ,.--'`   ',__ /./;   ;, '.__.'`    __               {BLACK_BR} ( (  ____  ( ()  () ){NEW_LINE}"
+         rf"{TAB*3}      /  _ \     | |   {RED}  _`) )  .---.__.' / |   |\   \__..--\"\"  \"\"\"--.,_  {BLACK_BR} ( ( (__  ) ( ()  () ){NEW_LINE}"
+         rf"{TAB*3}     _) (_) )   _| |__ {RED} `---' .'.''-._.-'`_./  /\ '.  \ _.-~~~````~~~-._`-.__.'{BLACK_BR}  \ \__/ /   \ \__/ / {NEW_LINE}"
+         rf"{TAB*3}    (______/   /_____( {RED}       | |  .' _.-' |  |  \  \  '.               `~---` {BLACK_BR}   \____/     \____/  {NEW_LINE}"
+         rf"{TAB*3}                       {RED}        \ \/ .'     \  \   '. '-._)                     {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                       {RED}         \/ /        \  \    `=.__`~-.                  {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                       {RED}         / /\         `) )    / / `\"\".`\              {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                       {RED}   , _.-'.'\ \        / /    ( (     / /                {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                       {RED}    `--~`   ) )    .-'.'      '.'.  | (                 {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                       {RED}           (/`    ( (`          ) )  '-;                {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                       {RED}            `      '-;         (-'                      {BLACK_BR}                      {NEW_LINE}"
+         " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+         )
 
 BALL = "🔴"                                                     # VIS: This is only for makeing an image!
 SPECIAL_BALL = "🔵"                                             # VIS: This is only for makeing an image!
@@ -129,7 +155,7 @@ def print_one_board(board: list[int]) -> None:                  # VIS: This is o
             if board[i+j] == BALL:
                 print(f"{BALL}", end=' ')
             else:
-                print(f"{OTHER_BALL}", end=' ')
+                print(f"{SPECIAL_BALL}", end=' ')
         print('\n')
 
 
@@ -140,7 +166,7 @@ def print_all_boards(boards: list[list[int]]) -> None:          # VIS: This is o
         boards (list[list[int]]): The boards to print.
     """
 
-    sys.stdout.write(f"{BLINK_OFF}{START}{UP*80}")
+    sys.stdout.write(HOME)
     output = '\n\n'
     for boards_m in range(0, 100, 10):
         for rows_k in range(0, 25, 5):
@@ -154,7 +180,9 @@ def print_all_boards(boards: list[list[int]]) -> None:          # VIS: This is o
                         output += (f"{boards[board_j][ball_i]:3}")
                 output += " "
             output += "\n"
-        output += (f"{HIDE}{END}")
+        output += "\n"
+    output += SQUID
+
     sys.stdout.write(output)
 
 
@@ -293,7 +321,6 @@ def main(input_data: list[str]) -> tuple[int, int]:
             if j in winners:
                 continue
             boards[j] = place_ball(ball, boards[j])
-            print_all_boards(boards)                                # VIS: This is only for makeing an image!
             if check_rows(boards[j]) or check_columns(boards[j]):
                 if not first_winner:                                # VIS: This is only for makeing an image!
                     boards[j] = change_winning_baord(boards[j])     # VIS: This is only for makeing an image!
@@ -301,6 +328,8 @@ def main(input_data: list[str]) -> tuple[int, int]:
                 winners.append(j)
                 w_ball.append(ball)
                 continue
+        time.sleep(.05)
+        print_all_boards(boards)                                # VIS: This is only for makeing an image!
     # print_one_board(boards[winners[0]])
     boards[winners[-1]] = change_winning_baord(boards[winners[-1]])
     print_all_boards(boards)                                        # VIS: This is only for makeing an image!
@@ -312,9 +341,13 @@ if __name__ == "__main__":
     with open("Day_04/input.txt", 'r', encoding='utf-8') as f:
         data = format_data(f)
     _ = system('cls')                                               # VIS: This is only for makeing an image!
+    sys.stdout.write(f"{INV}{BLINK_OFF}{BLACK_BR}")                 # VIS: This is only for makeing an image!
     p1, p2 = main(data)
     print(f"Part 1: {p1:5}")
-    print(f"Part 2: {p2:5}")
+    print(f"Part 2: {p2:5}\n")
+    sys.stdout.write(END)                                           # VIS: This is only for makeing an image!
+time.sleep(1)                                                       # VIS: This is only for makeing an image!
+sys.stdout.flush()                                                  # VIS: This is only for makeing an image!
 
 # Part 1: 23177
 # Part 2: 6804
