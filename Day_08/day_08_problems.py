@@ -232,6 +232,7 @@ def part1(pattern_output: list[str]) -> int:
         int: total occurrences of 1, 4, 7, 8
     """
 
+    # Get only the right half, digital values, from the input.
     digital = [z.strip() for x in pattern_output for y in x.split(" | ")[1::2] for z in y.split()]
     return sum(1 for x in digital if len(x) in UNIQUES)
 
@@ -263,14 +264,14 @@ def part2(pattern_output: list[str]) -> int:
 
         # Go ahead and check for the numbers we can find just
         # by length (1, 4, 7, 8)
-        for i, signal in enumerate(digital):
-            if len(signal) in UNIQUES:
-                answers[i] = UNIQUES[len(signal)]
+        for i, digit in enumerate(digital):
+            if len(digit) in UNIQUES:
+                answers[i] = UNIQUES[len(digit)]
 
-        # If we have not already found all 4 digital values
+        # If we have not already found all 4 digital values,
         # decipher each remaining value by comparing it to 1
-        # and 4 every remaining number (0, 2, 3, 5, 6, 9) has
-        # a unique similarity to 1 and 4 long with its length.
+        # and 4. Every remaining number (0, 2, 3, 5, 6, 9) has
+        # a unique similarity to 1 and 4 along with its length.
         for i, answer in enumerate(answers):
             if answer is None:
                 answers[i] = CYPHER[(like_digit(one, digital[i]), like_digit(four, digital[i]), len(digital[i]))]
