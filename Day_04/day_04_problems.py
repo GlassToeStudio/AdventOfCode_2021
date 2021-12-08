@@ -104,24 +104,24 @@ from colors import BLACK_BR, BLINK_OFF, END, HOME, INV, RED
 NEW_LINE = "\n"
 TAB = "\t"
 SQUID = (" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-         rf"{TAB*3}                       {RED}                       ___                              {BLACK_BR}                      {NEW_LINE}"
-         rf"{TAB*3}                       {RED}                    .-'   `'.                           {BLACK_BR}                      {NEW_LINE}"
-         rf"{TAB*3}                       {RED}                   /         \                          {BLACK_BR}                      {NEW_LINE}"
-         rf"{TAB*3}                       {RED}                   |         ;                          {BLACK_BR}                      {NEW_LINE}"
-         rf"{TAB*3}     ______     _____  {RED}                   |         |           ___.--,        {BLACK_BR}    _____      ____   {NEW_LINE}"
-         rf"{TAB*3}    (_   _ \   (_   _) {RED}          _.._     |0) ~ (0) |    _.---'`__.-( (_.      {BLACK_BR}   / ___ \    / __ \  {NEW_LINE}"
-         rf"{TAB*3}      ) (_) )    | |   {RED}   __.--'`_.. '.__.\    '--. \_.-' ,.--'`     `\"\"`    {BLACK_BR}  / /   \_)  / /  \ \ {NEW_LINE}"
-         rf"{TAB*3}      \   _/     | |   {RED}  ( ,.--'`   ',__ /./;   ;, '.__.'`    __               {BLACK_BR} ( (  ____  ( ()  () ){NEW_LINE}"
-         rf"{TAB*3}      /  _ \     | |   {RED}  _`) )  .---.__.' / |   |\   \__..--\"\"  \"\"\"--.,_  {BLACK_BR} ( ( (__  ) ( ()  () ){NEW_LINE}"
-         rf"{TAB*3}     _) (_) )   _| |__ {RED} `---' .'.''-._.-'`_./  /\ '.  \ _.-~~~````~~~-._`-.__.'{BLACK_BR}  \ \__/ /   \ \__/ / {NEW_LINE}"
-         rf"{TAB*3}    (______/   /_____( {RED}       | |  .' _.-' |  |  \  \  '.               `~---` {BLACK_BR}   \____/     \____/  {NEW_LINE}"
-         rf"{TAB*3}                       {RED}        \ \/ .'     \  \   '. '-._)                     {BLACK_BR}                      {NEW_LINE}"
-         rf"{TAB*3}                       {RED}         \/ /        \  \    `=.__`~-.                  {BLACK_BR}                      {NEW_LINE}"
-         rf"{TAB*3}                       {RED}         / /\         `) )    / / `\"\".`\              {BLACK_BR}                      {NEW_LINE}"
-         rf"{TAB*3}                       {RED}   , _.-'.'\ \        / /    ( (     / /                {BLACK_BR}                      {NEW_LINE}"
-         rf"{TAB*3}                       {RED}    `--~`   ) )    .-'.'      '.'.  | (                 {BLACK_BR}                      {NEW_LINE}"
-         rf"{TAB*3}                       {RED}           (/`    ( (`          ) )  '-;                {BLACK_BR}                      {NEW_LINE}"
-         rf"{TAB*3}                       {RED}            `      '-;         (-'                      {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                         {RED}                       ___                              {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                         {RED}                    .-'   `'.                           {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                         {RED}                   /         \                          {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                         {RED}                   |         ;                          {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}       ______     _____  {RED}                   |         |           ___.--,        {BLACK_BR}    _____      ____   {NEW_LINE}"
+         rf"{TAB*3}      (_   _ \   (_   _) {RED}          _.._     |0) ~ (0) |    _.---'`__.-( (_.      {BLACK_BR}   / ___ \    / __ \  {NEW_LINE}"
+         rf"{TAB*3}        ) (_) )    | |   {RED}   __.--'`_.. '.__.\    '--. \_.-' ,.--'`     `\"\"`    {BLACK_BR}  / /   \_)  / /  \ \ {NEW_LINE}"
+         rf"{TAB*3}        \   _/     | |   {RED}  ( ,.--'`   ',__ /./;   ;, '.__.'`    __               {BLACK_BR} ( (  ____  ( ()  () ){NEW_LINE}"
+         rf"{TAB*3}        /  _ \     | |   {RED}  _`) )  .---.__.' / |   |\   \__..--\"\"  \"\"\"--.,_  {BLACK_BR} ( ( (__  ) ( ()  () ){NEW_LINE}"
+         rf"{TAB*3}       _) (_) )   _| |__ {RED} `---' .'.''-._.-'`_./  /\ '.  \ _.-~~~````~~~-._`-.__.'{BLACK_BR}  \ \__/ /   \ \__/ / {NEW_LINE}"
+         rf"{TAB*3}      (______/   /_____( {RED}       | |  .' _.-' |  |  \  \  '.               `~---` {BLACK_BR}   \____/     \____/  {NEW_LINE}"
+         rf"{TAB*3}                         {RED}        \ \/ .'     \  \   '. '-._)                     {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                         {RED}         \/ /        \  \    `=.__`~-.                  {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                         {RED}         / /\         `) )    / / `\"\".`\              {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                         {RED}   , _.-'.'\ \        / /    ( (     / /                {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                         {RED}    `--~`   ) )    .-'.'      '.'.  | (                 {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                         {RED}           (/`    ( (`          ) )  '-;                {BLACK_BR}                      {NEW_LINE}"
+         rf"{TAB*3}                         {RED}            `      '-;         (-'                      {BLACK_BR}                      {NEW_LINE}"
          " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
          )
 
@@ -340,6 +340,7 @@ def main(input_data: list[str]) -> tuple[int, int]:
 if __name__ == "__main__":
     with open("Day_04/input.txt", 'r', encoding='utf-8') as f:
         data = format_data(f)
+    sys.stdout.write(HOME)
     _ = system('cls')                                               # VIS: This is only for makeing an image!
     sys.stdout.write(f"{INV}{BLINK_OFF}{BLACK_BR}")                 # VIS: This is only for makeing an image!
     p1, p2 = main(data)
