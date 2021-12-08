@@ -167,7 +167,10 @@ values?
 from io import TextIOWrapper
 
 UNIQUES = {2: "1", 3: "7", 4: "4", 7: "8"}
+"""Dictionary of {length : digit} for the 4 unique digits"""
+
 CYPHER = {(2, 3, 6): "0", (1, 2, 5): "2", (2, 3, 5): "3", (1, 3, 5): "5", (1, 3, 6): "6", (2, 4, 6): "9"}
+"""Dictionary of {tuple : digit} for the remaining 6 values. The tupel is 1 & digit, 4 & digit, len(digit)) """
 
 
 def format_data(in_file: TextIOWrapper) -> list[str]:
@@ -254,14 +257,20 @@ def part2(pattern_output: list[str]) -> int:
         signal = _s.split()
         digital = _d.split()
 
+        # We can use 1 adn 4 to decipher the raminaing numbers.
         one = find_digit(signal, 2)
         four = find_digit(signal, 4)
 
-        # Go ahead and check the
+        # Go ahead and check for the numbers we can find just
+        # by length (1, 4, 7, 8)
         for i, signal in enumerate(digital):
             if len(signal) in UNIQUES:
                 answers[i] = UNIQUES[len(signal)]
 
+        # If we have not already found all 4 digital values
+        # decipher each remainign value by comaring it to 1
+        # and 4 every remaining number (0, 2, 3, 5, 6, 9) has
+        # a unique similarity to 1 and 4 long with its length.
         for i, answer in enumerate(answers):
             if answer == "":
                 answers[i] = CYPHER[(like_digit(one, digital[i]), like_digit(four, digital[i]), len(digital[i]))]
