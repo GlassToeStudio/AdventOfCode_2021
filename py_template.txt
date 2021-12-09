@@ -20,6 +20,6 @@ def format_data(in_file: TextIOWrapper) -> list[str]:
 
 
 if __name__ == "__main__":
-    with open("Day_{day}/sample.txt", "r', encoding='utf-8') as f:
+    with open("Day_{day}/sample.txt", "r", encoding='utf-8') as f:
         data = format_data(f)
         print(data)
