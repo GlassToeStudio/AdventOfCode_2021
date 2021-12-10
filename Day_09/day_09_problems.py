@@ -89,6 +89,45 @@ basins?
 
 from io import TextIOWrapper
 
+from PIL import Image
+
+
+def enlarge_image(image: Image, width: int, height: int,  base: int = 512) -> Image:            # VIS: This is only for makeing an image!
+    """Resize and image to scale with maximum base value.
+    If base value < image dimensions, image is not resized.
+
+    Args:
+        image (Imgae): image to resize
+        width (int): width of image
+        height (int): height of image
+        base (int, optional): max image size. Defaults to 512.
+
+    Returns:
+        Image: the enlarged image
+    """
+
+    scale = max(width, height, base) / max(width, height)
+    return image.resize((int(width * scale), int(height * scale)), Image.ANTIALIAS)
+
+
+def generate_heightmap_image(heightmap: list[list[int]]):
+    image = Image.new('RGBA', (len(heightmap[0]), len(heightmap)),  (0, 0, 0, 255))
+    pixels = image.load()
+    for i in range(9):
+        for r_i, row in enumerate(heightmap):
+            for c_i, column in enumerate(row):
+                if column <= i:
+                    r, g, b, a = image.getpixel((c_i, r_i))
+                    r += 28
+                    g += 28
+                    b += 28
+                    colo = (r, g, b, a)
+                    pixels[c_i, r_i] = colo
+
+    #image = enlarge_image(image, len(heightmap[0]), len(heightmap), base=4096)
+    filepath = (f'Day_09/image.png')
+    image.save(filepath)
+
 
 def format_data(in_file: TextIOWrapper) -> list[list[int]]:
     """Return a list of list[int] from the given text."
@@ -122,17 +161,17 @@ def get_risk_and_low_points(heightmap: list[list[int]]) -> tuple[int, list[tuple
 
     risk = 0
     low_points = []
-    for row in range(len(heightmap)):
-        for column in range(len(heightmap[0])):
-            neighbors = get_neighbors(heightmap, row, column)
+    for r_i, row in enumerate(heightmap):
+        for c_i, column in enumerate(row):
+            neighbors = get_neighbors(heightmap, r_i, c_i)
 
-            if heightmap[row][column] < min([heightmap[x[0]][x[1]] for x in neighbors]):
-                risk += heightmap[row][column] + 1
-                low_points.append((row, column))
+            if column < min([heightmap[n[0]][n[1]] for n in neighbors]):
+                risk += column + 1
+                low_points.append((r_i, c_i))
     return risk, low_points
 
 
-def get_neighbors(heightmap: list[list[int]], row: int, column: int) -> list[tuple[int, int]]:
+def get_neighbors(heightmap: list[list[int]], column: int, row: int) -> list[tuple[int, int]]:
     """Return all direct horizontal and vertical neighbors
     for a given row, column in the heightmap as a list.
 
@@ -147,18 +186,18 @@ def get_neighbors(heightmap: list[list[int]], row: int, column: int) -> list[tup
 
     neighbors = []
     for i in [-1, 1]:
-        # check up and down
-        if row + i >= 0 and row + i < len(heightmap):
-            neighbors.append((row + i, column))
-
         # check left and right
-        if column + i >= 0 and column + i < len(heightmap[0]):
-            neighbors.append((row, column + i))
+        if column + i >= 0 and column + i < len(heightmap):
+            neighbors.append((column + i, row))
+
+        # check up and down
+        if row + i >= 0 and row + i < len(heightmap[0]):
+            neighbors.append((column, row + i))
 
     return neighbors
 
 
-def get_basins_recursive(coords: tuple[int, int], heightmap: list[list[int]], visited: list[tuple[int, int]]) -> int:
+def get_basins_recursive(heightmap: list[list[int]], coords: tuple[int, int], visited: list[tuple[int, int]]) -> int:
     """Get every neighbor of the passed coordinates. If
     we have not yet visited that neighbor, mark it as visited.
     If the value of that neighbor is smaller than 9, add
@@ -168,8 +207,8 @@ def get_basins_recursive(coords: tuple[int, int], heightmap: list[list[int]], vi
     Sum the size of each returned value and finally return.
 
     Args:
-        coords (tuple[int, int]): the initial coordinates to check around.
         heightmap (list[list[int]]): the heightmap.
+        coords (tuple[int, int]): the initial coordinates to check around.
         visited (list[tuple[int, int]]): list of all previously visited locations.
 
     Returns:
@@ -181,7 +220,7 @@ def get_basins_recursive(coords: tuple[int, int], heightmap: list[list[int]], vi
         if (neighbor_x, neighbor_y) not in visited:
             visited.append((neighbor_x, neighbor_y))
             if heightmap[neighbor_x][neighbor_y] != 9:
-                basin_size += get_basins_recursive((neighbor_x, neighbor_y), heightmap, visited)
+                basin_size += get_basins_recursive(heightmap, (neighbor_x, neighbor_y), visited)
     return basin_size
 
 
@@ -197,11 +236,11 @@ def get_prod_of_three_large_basins(heightmap: list[list[int]], lows: list[tuple[
         int: product of thee largest basins
     """
 
-    visited = []
     basins = []
+    visited = []
     for low_x, low_y in lows:
         visited.append((low_x, low_y))
-        basins.append(get_basins_recursive((low_x, low_y), heightmap, visited))
+        basins.append(get_basins_recursive(heightmap, (low_x, low_y), visited))
     basins.sort()
     return basins[-3] * basins[-2] * basins[-1]
 
@@ -209,9 +248,11 @@ def get_prod_of_three_large_basins(heightmap: list[list[int]], lows: list[tuple[
 if __name__ == "__main__":
     with open("Day_09/input.txt", "r", encoding="utf-8") as f:
         data = format_data(f)
-    p1, lp = get_risk_and_low_points(data)
-    print(f"# Part 1: {p1:6}")
-    print(f"# Part 2: {get_prod_of_three_large_basins(data, lp):6}")
+    generate_heightmap_image(data)
+
+    # rl, lp = get_risk_and_low_points(data)
+    # print(f"# Part 1: {rl:6}")
+    # print(f"# Part 2: {get_prod_of_three_large_basins(data, lp):6}")
 
 # Part 1:    541
 # Part 2: 847504
