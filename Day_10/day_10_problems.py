@@ -168,8 +168,8 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
     Add the sum of scores for the first incorrect closing bracket
     for each line.
 
-    For each line in the given navigation subsystem, thqt is not
-    currput, search any incomplete lines to find the remaining
+    For each line in the given navigation subsystem, that is not
+    corrupt, search any incomplete lines to find the remaining
     required closing brackets that would complete the line.
     Each type of bracket has a score associated with it. Find
     the score of each incomplete line. Return the middle score.
@@ -203,7 +203,7 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
                 continue
 
             # we failed to complete a bracket: we have a corrupt line.
-            # Calcualte the points for the corrupt line and reset
+            # Calculate the points for the corrupt line and reset
             # the chunks open. Break and go to next line.
             points += point_dict_corrupt[character]
             chunks_open = None
@@ -215,7 +215,7 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
         if chunks_open:
             finsihing_sequence.append([chunk_pairs[x] for x in reversed(chunks_open)])
 
-    # Calc the median score for incomplete lines
+    # Calculate the median score for incomplete lines
     for sequence in finsihing_sequence:
         score = 0
         for character in sequence:
