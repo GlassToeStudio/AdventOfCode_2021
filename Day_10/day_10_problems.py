@@ -205,7 +205,7 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
                 sys.stdout.write(f"{UP*1}")  # VIS: This is only for viualization!
                 print(f"{GREEN}{p_line[0:i]}{WHITE_BG}{p_line[i]}{END}{p_line[i+1:]}")  # VIS: This is only for viualization!
                 i += 1  # VIS: This is only for viualization!
-                time.sleep(0.01)  # VIS: This is only for viualization!
+                time.sleep(0.001)  # VIS: This is only for viualization!
                 continue
 
             # Matching closing bracket found, remove opening bracket from end of list.
@@ -222,7 +222,6 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
             points += point_dict_corrupt[character]
             sys.stdout.write(f"{UP*1}")  # VIS: This is only for viualization!
             print(f'{f"{GREEN}{p_line[0:i]}{BLACK_BG}{RED}{p_line[i]}{END}{p_line[i+1:]}":132} : {YELLOW}{chunk_pairs[chunks_open[-1]]:10}{END}')  # VIS: This is only for viualization!
-            time.sleep(0.05)  # VIS: This is only for viualization!
             print()  # VIS: This is only for viualization!
             chunks_open = None
             break
@@ -234,7 +233,6 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
             sys.stdout.write(f"{UP*1}")  # VIS: This is only for viualization!
             print(f'{f"{GREEN}{p_line[0:i]}{END}":120} : {YELLOW}{"".join([chunk_pairs[x] for x in reversed(chunks_open)]):10}{END}')  # VIS: This is only for viualization!
             print()  # VIS: This is only for viualization!
-            time.sleep(0.05)  # VIS: This is only for viualization!
             finsihing_sequence.append([chunk_pairs[x] for x in reversed(chunks_open)])
 
     # Calculate the median score for incomplete lines
@@ -252,7 +250,6 @@ if __name__ == "__main__":
         data = format_data(f)
     _ = system("cls")  # VIS: This is only for viualization!
     p1, p2 = find_corrupt_and_incomplete_line_scores(data)
-    print(BOLD)  # VIS: This is only for viualization!
     print(f"# Part 1: {p1:10}")
     print(f"# Part 2: {p2:10}")
 
