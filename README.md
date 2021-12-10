@@ -266,8 +266,16 @@ Overall description
 ### Part 1:
 Part 1 description
 
+<p align="center">
+<img src="https://github.com/GlassToeStudio/AdventOfCode_2021/blob/master/Day_09/heightmap_large.png" width="50%" height="50%"
+</p>
+
 ### Part 2:
 Part 2 description
+
+<p align="center">
+<img src="https://github.com/GlassToeStudio/AdventOfCode_2021/blob/master/Day_09/images/heightmap-lava-fill-animated.gif" width="50%" height="50%"
+</p>
 
 </p>
 </details>
@@ -288,6 +296,12 @@ Part 1 description
 
 ### Part 2:
 Part 2 description
+
+
+<p align="center">
+<img src="https://github.com/GlassToeStudio/AdventOfCode_2021/blob/master/Day_10/da_10_1.gif" width="50%" height="50%"
+</p>
+
 
 </p>
 </details>
