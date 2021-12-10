@@ -144,7 +144,12 @@ strings, and sort the scores. What is the middle score?
 """
 
 
+import sys
+import time
 from io import TextIOWrapper
+from os import system
+
+from colors import BLACK_BG, BOLD, END, GREEN, RED, UP, WHITE_BG, YELLOW
 
 
 def format_data(in_file: TextIOWrapper) -> list[str]:
@@ -190,22 +195,35 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
     finsihing_sequence = []
     for line in navigation_subsystem:
         chunks_open = []
+        p_line = line  # VIS: This is only for viualization!
+        i = 0  # VIS: This is only for viualization!
         for character in line:
 
             # Opening bracket found, add to the end of list
             if character in chunk_pairs:
                 chunks_open.append(character)
+                sys.stdout.write(f"{UP*1}")  # VIS: This is only for viualization!
+                print(f"{GREEN}{p_line[0:i]}{WHITE_BG}{p_line[i]}{END}{p_line[i+1:]}")  # VIS: This is only for viualization!
+                i += 1  # VIS: This is only for viualization!
+                time.sleep(0.01)  # VIS: This is only for viualization!
                 continue
 
             # Matching closing bracket found, remove opening bracket from end of list.
             if character == chunk_pairs[chunks_open[-1]]:
                 chunks_open.pop()
+                sys.stdout.write(f"{UP*1}")  # VIS: This is only for viualization!
+                print(f'{f"{GREEN}{p_line[0:i]}{BLACK_BG}{p_line[i]}{END}{p_line[i+1:]}":120}')  # VIS: This is only for viualization!
+                i += 1  # VIS: This is only for viualization!
                 continue
 
             # we failed to complete a bracket: we have a corrupt line.
             # Calculate the points for the corrupt line and reset
             # the chunks open. Break and go to next line.
             points += point_dict_corrupt[character]
+            sys.stdout.write(f"{UP*1}")  # VIS: This is only for viualization!
+            print(f'{f"{GREEN}{p_line[0:i]}{BLACK_BG}{RED}{p_line[i]}{END}{p_line[i+1:]}":132} : {YELLOW}{chunk_pairs[chunks_open[-1]]:10}{END}')  # VIS: This is only for viualization!
+            time.sleep(0.05)  # VIS: This is only for viualization!
+            print()  # VIS: This is only for viualization!
             chunks_open = None
             break
 
@@ -213,6 +231,10 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
         # Find the required closing chunks and add the
         # sequence to the list.
         if chunks_open:
+            sys.stdout.write(f"{UP*1}")  # VIS: This is only for viualization!
+            print(f'{f"{GREEN}{p_line[0:i]}{END}":120} : {YELLOW}{"".join([chunk_pairs[x] for x in reversed(chunks_open)]):10}{END}')  # VIS: This is only for viualization!
+            print()  # VIS: This is only for viualization!
+            time.sleep(0.05)  # VIS: This is only for viualization!
             finsihing_sequence.append([chunk_pairs[x] for x in reversed(chunks_open)])
 
     # Calculate the median score for incomplete lines
@@ -228,7 +250,9 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
 if __name__ == "__main__":
     with open("Day_10/input.txt", "r", encoding="utf-8") as f:
         data = format_data(f)
+    _ = system("cls")  # VIS: This is only for viualization!
     p1, p2 = find_corrupt_and_incomplete_line_scores(data)
+    print(BOLD)  # VIS: This is only for viualization!
     print(f"# Part 1: {p1:10}")
     print(f"# Part 2: {p2:10}")
 
