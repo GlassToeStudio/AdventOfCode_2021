@@ -92,7 +92,7 @@ from io import TextIOWrapper
 from PIL import Image
 
 
-def enlarge_image(image: Image, width: int, height: int,  base: int = 512) -> Image:            # VIS: This is only for makeing an image!
+def enlarge_image(image: Image, width: int, height: int,  base: int = 512) -> Image:    # VIS: This is only for makeing an image!
     """Resize and image to scale with maximum base value.
     If base value < image dimensions, image is not resized.
 
@@ -110,7 +110,13 @@ def enlarge_image(image: Image, width: int, height: int,  base: int = 512) -> Im
     return image.resize((int(width * scale), int(height * scale)), Image.ANTIALIAS)
 
 
-def generate_heightmap_image(heightmap: list[list[int]]):
+def generate_heightmap_image(heightmap: list[list[int]]):                               # VIS: This is only for makeing an image!
+    """Generate heightmap image
+
+    Args:
+        heightmap (list[list[int]]): the heightmap data
+    """
+
     image = Image.new('RGBA', (len(heightmap[0]), len(heightmap)),  (0, 0, 0, 255))
     pixels = image.load()
     for i in range(9):
@@ -118,14 +124,11 @@ def generate_heightmap_image(heightmap: list[list[int]]):
             for c_i, column in enumerate(row):
                 if column <= i:
                     r, g, b, a = image.getpixel((c_i, r_i))
-                    r += 28
-                    g += 28
-                    b += 28
-                    colo = (r, g, b, a)
+                    colo = (r+28, g+28, b+28, a)
                     pixels[c_i, r_i] = colo
 
-    #image = enlarge_image(image, len(heightmap[0]), len(heightmap), base=4096)
-    filepath = (f'Day_09/image.png')
+    # image = enlarge_image(image, len(heightmap[0]), len(heightmap), base=4096)
+    filepath = ("Day_09/image.png")
     image.save(filepath)
 
 
@@ -248,11 +251,11 @@ def get_prod_of_three_large_basins(heightmap: list[list[int]], lows: list[tuple[
 if __name__ == "__main__":
     with open("Day_09/input.txt", "r", encoding="utf-8") as f:
         data = format_data(f)
-    generate_heightmap_image(data)
+    generate_heightmap_image(data)                                                      # VIS: This is only for makeing an image!
 
-    # rl, lp = get_risk_and_low_points(data)
-    # print(f"# Part 1: {rl:6}")
-    # print(f"# Part 2: {get_prod_of_three_large_basins(data, lp):6}")
+    rl, lp = get_risk_and_low_points(data)
+    print(f"# Part 1: {rl:6}")
+    print(f"# Part 2: {get_prod_of_three_large_basins(data, lp):6}")
 
 # Part 1:    541
 # Part 2: 847504
