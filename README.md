@@ -299,7 +299,7 @@ Part 2 description
 
 
 <p align="center">
-<img src="https://github.com/GlassToeStudio/AdventOfCode_2021/blob/master/Day_10/da_10_1.gif" width="50%" height="50%"
+<img src="https://github.com/GlassToeStudio/AdventOfCode_2021/blob/master/Day_10/day_10_1.gif" width="50%" height="50%"
 </p>
 
 
