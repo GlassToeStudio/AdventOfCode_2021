@@ -146,13 +146,6 @@ strings, and sort the scores. What is the middle score?
 
 from io import TextIOWrapper
 
-point_dict_corrupt = {")": 3, "]": 57, "}": 1197, ">": 25137}
-
-
-point_dict_incomplete = {")": 1, "]": 2, "}": 3, ">": 4}
-
-chunk_pairs = {"(": ")", "[": "]", "{": "}", "<": ">"}
-
 
 def format_data(in_file: TextIOWrapper) -> list[str]:
     """Return a list of str from the given text."
@@ -167,7 +160,7 @@ def format_data(in_file: TextIOWrapper) -> list[str]:
     return [x.strip() for x in in_file.readlines()]
 
 
-def find_corrupted_lines(navigation_subsystem: list[list[str]]) -> tuple[int, list[int]]:
+def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]]) -> tuple[int, int]:
     """For each line of sequences in the given navigation subsystem
     Find every 'corrupt chunk' which means to find the first incorrect
     closing bracket. Find just the first incorrect closing bracket
@@ -175,83 +168,59 @@ def find_corrupted_lines(navigation_subsystem: list[list[str]]) -> tuple[int, li
     Add the sum of scores for the first incorrect closing bracket
     for each line.
 
-    - ignore any incomplete lines: lines that are simply missing
-      closing brackets at the end
-
-    Args:
-        navigation_subsystem (list[list[str]]): lines to parse
-
-    Returns:
-        tuple[int, list[int]]: total score and index of corrupt line
-    """
-
-    points = 0
-    corrupt_lines = []
-    for l_i, line in enumerate(navigation_subsystem):
-        chunk_open = []
-        for character in line:
-            if character in chunk_pairs:
-                chunk_open.append(character)
-                continue
-            if character == chunk_pairs[chunk_open[-1]]:
-                chunk_open.pop()
-                continue
-            else:
-                points += point_dict_corrupt[character]
-                corrupt_lines.append(l_i)
-                break
-
-    return points, corrupt_lines
-
-
-def find_incomplete_lines(navigation_subsystem: list[list[str]], corrupt_lines: list[int]) -> int:
-    """For each line in the given navigation subsystem, search
-    any incomplete lines to find the remaining required closing
-    brackets that would complete the line. Each type of bracket
-    has a score associated with it. Find the score of each
-    incomplete line. Return the middle score.
-
-    - ignore corrupt lines
+    For each line in the given navigation subsystem, thqt is not
+    currput, search any incomplete lines to find the remaining
+    required closing brackets that would complete the line.
+    Each type of bracket has a score associated with it. Find
+    the score of each incomplete line. Return the middle score.
 
     Args:
         navigation_subsystem (list[list[str]]):lines to parse
-        corrupt_lines (list[int]): index of each corrupt line
 
     Returns:
-        int: median score
+        tuple[int,int]: score for corrupt, median score for incomplete
     """
 
+    chunk_pairs = {"(": ")", "[": "]", "{": "}", "<": ">"}
+    point_dict_corrupt = {")": 3, "]": 57, "}": 1197, ">": 25137}
+    point_dict_incomplete = {")": 1, "]": 2, "}": 3, ">": 4}
+
+    points = 0
+    scores = []
     finsihing_sequence = []
-    for l_i, line in enumerate(navigation_subsystem):
-        if l_i in corrupt_lines:
-            continue
+    for line in navigation_subsystem:
         chunk_open = []
         for character in line:
             if character in chunk_pairs:
                 chunk_open.append(character)
                 continue
+
             if character == chunk_pairs[chunk_open[-1]]:
                 chunk_open.pop()
                 continue
-        finsihing_sequence.append([chunk_pairs[x] for x in reversed(chunk_open)])
 
-    scores = []
+            points += point_dict_corrupt[character]
+            chunk_open = None
+            break
+
+        if chunk_open:
+            finsihing_sequence.append([chunk_pairs[x] for x in reversed(chunk_open)])
+
     for sequence in finsihing_sequence:
         score = 0
         for character in sequence:
-            score *= 5
-            score += point_dict_incomplete[character]
+            score = score * 5 + point_dict_incomplete[character]
         scores.append(score)
     scores.sort()
-    return scores[len(scores) // 2]
+    return points, scores[len(scores) // 2]
 
 
 if __name__ == "__main__":
     with open("Day_10/input.txt", "r", encoding="utf-8") as f:
         data = format_data(f)
-    p, cl = find_corrupted_lines(data)
-    print(f"# Part 1: {p:10}")
-    print(f"# Part 2: {find_incomplete_lines(data, cl):10}")
+    p1, p2 = find_corrupt_and_incomplete_line_scores(data)
+    print(f"# Part 1: {p1:10}")
+    print(f"# Part 2: {p2:10}")
 
 # Part 1:     168417
 # Part 2: 2802519786
