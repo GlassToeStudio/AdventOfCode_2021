@@ -189,23 +189,33 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
     scores = []
     finsihing_sequence = []
     for line in navigation_subsystem:
-        chunk_open = []
+        chunks_open = []
         for character in line:
+
+            # Opening bracket found, add to the end of list
             if character in chunk_pairs:
-                chunk_open.append(character)
+                chunks_open.append(character)
                 continue
 
-            if character == chunk_pairs[chunk_open[-1]]:
-                chunk_open.pop()
+            # Matching closing bracket found, remove opening bracket from end of list.
+            if character == chunk_pairs[chunks_open[-1]]:
+                chunks_open.pop()
                 continue
 
+            # we failed to complete a bracket: we have a corrupt line.
+            # Calcualte the points for the corrupt line and reset
+            # the chunks open. Break and go to next line.
             points += point_dict_corrupt[character]
-            chunk_open = None
+            chunks_open = None
             break
 
-        if chunk_open:
-            finsihing_sequence.append([chunk_pairs[x] for x in reversed(chunk_open)])
+        # We have and incomplete line; chunks left open.
+        # Find the required closing chunks and add the
+        # sequence to the list.
+        if chunks_open:
+            finsihing_sequence.append([chunk_pairs[x] for x in reversed(chunks_open)])
 
+    # Calc the median score for incomplete lines
     for sequence in finsihing_sequence:
         score = 0
         for character in sequence:
