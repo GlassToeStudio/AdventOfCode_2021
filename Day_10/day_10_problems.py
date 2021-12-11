@@ -149,7 +149,7 @@ import time
 from io import TextIOWrapper
 from os import system
 
-from colors import BLACK_BG, BOLD, END, GREEN, RED, UP, WHITE_BG, YELLOW
+from colors import BLACK_BG, END, GREEN, RED, UP, WHITE_BG, YELLOW
 
 
 def format_data(in_file: TextIOWrapper) -> list[str]:
