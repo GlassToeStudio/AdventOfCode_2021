@@ -389,8 +389,49 @@ def format_data(in_file: TextIOWrapper) -> list[list[int]]:
     return output
 
 
+def next_iteration_flahses(octopus_grid: list[list[int]]) -> int:
+    flashes = 0
+    flashed = []
+    for r_i, row in enumerate(octopus_grid):
+        for c_i, _ in enumerate(row):
+            octopus_grid, flashed, flashes = update_octopuses(octopus_grid, r_i, c_i, flashed, flashes)
+
+    return flashes
+
+
+def update_octopuses(octopus_grid: list[list[int]], row: int, column: int, flashed: list[tuple[int, int]], flashes: int) -> tuple[list[list[int]], list[tuple[int, int]], int]:
+    """Update the energy level for each octopus in the grid. If the
+    Energy level exceeds 9, the octopus will flash. A flash increases
+    the octopus' neighbors energy by 1 as well. If their energy level
+    exceeds 9, the flash. This happens until all octopuses have has their
+    energy increased and reacted to their neighbors action, if any. Return
+    the updated grid, the the octopuses that flashed this iteration, and the number
+    of flashes caused by increasing this octopus' energy level.
+
+    Args:
+        octopus_grid (list[list[int]]): The grid
+        row (int): row index of this octopus
+        column (int): column index of this octopus
+        flashed (list[tuple[int, int]]): list of all octopuses that have flashed this iteration
+        flashes (int): Total flashes
+
+    Returns:
+        tuple[list[list[int]], list[tuple[int, int]], int]: updated data
+    """
+
+    if (row, column) not in flashed:
+        octopus_grid[row][column] = (octopus_grid[row][column] + 1) % 10
+        if octopus_grid[row][column] == 0:
+            flashed.append((row, column))
+            flashes += 1
+
+            for n_r, n_c in get_neighbors(octopus_grid, row, column):
+                octopus_grid, flashed, flashes = update_octopuses(octopus_grid, n_r, n_c, flashed, flashes)
+    return octopus_grid, flashed, flashes
+
+
 def get_neighbors(octopus_grid: list[list[int]], row: int, column: int) -> list[tuple[int, int]]:
-    """Return all direct  neighbors for a given row,
+    """Return all direct neighbors for a given row,
     column in the octopus_grid as a list.
 
     Args:
@@ -403,56 +444,47 @@ def get_neighbors(octopus_grid: list[list[int]], row: int, column: int) -> list[
     """
 
     neighbors = []
-    for r in [row-1, row+0, row+1]:
-        for c in [column-1, column+0, column+1]:
-            if row != r or column != c:
-                if 0 <= r < len(octopus_grid) and 0 <= c < len(octopus_grid[0]):
-                    neighbors.append((r, c, octopus_grid[r][c]))
+    for r_i in [row - 1, row + 0, row + 1]:
+        for c_i in [column - 1, column + 0, column + 1]:
+            if row != r_i or column != c_i:
+                if 0 <= r_i < len(octopus_grid) and 0 <= c_i < len(octopus_grid[r_i]):
+                    neighbors.append((r_i, c_i))
 
     return neighbors
 
 
-def next_iteration(octopus_grid):
-    flashes = 0
-    flashed = []
-    for r_i, row in enumerate(octopus_grid):
-        for c_i, column in enumerate(octopus_grid[0]):
-            octopus_grid, flashed, flashes = update_octopi(octopus_grid, r_i, c_i, flashed, flashes)
+def main(octopus_grid: list[list[int]]) -> tuple[int, int]:
+    """Run teh simulation until we reach a point that all
+    octopuses flash simultaneously and we reach at least 100
+    iterations.
 
-    return flashes
+    Args:
+        octopus_grid (list[list[int]]): The grid
 
+    Returns:
+        tuple[int, int]: total flashes in 100 iterations and iterations until all flash simultaneously.
+    """
 
-def update_octopi(octopus_grid, r, c, flashed, flashes):
-    if (r, c) not in flashed:
-        octopus_grid[r][c] = (octopus_grid[r][c] + 1) % 10
-        if octopus_grid[r][c] == 0:
-            flashed.append((r, c))
-            flashes += 1
+    total_flahses = 0
+    all_flashed = 0
+    i = 0
+    while not total_flahses or not all_flashed:
+        i += 1
+        flashes = next_iteration_flahses(octopus_grid)
+        if i <= 100:
+            total_flahses += flashes
+        if flashes == 100:
+            all_flashed = i
 
-            for n_r, n_c, n_v in get_neighbors(octopus_grid, r, c):
-                octopus_grid, flashed, flashes = update_octopi(octopus_grid, n_r, n_c, flashed, flashes)
-    return octopus_grid, flashed, flashes
-
-
-def print_grid(octopus_grid):
-    print()
-    for r_i, row in enumerate(octopus_grid):
-        for c_i, column in enumerate(octopus_grid[0]):
-            print(octopus_grid[r_i][c_i], end='')
-
-        print()
-    print()
+    return total_flahses, all_flashed
 
 
 if __name__ == "__main__":
-    with open("Day_11/input.txt", "r", encoding='utf-8') as f:
+    with open("Day_11/input.txt", "r", encoding="utf-8") as f:
         data = format_data(f)
-        flashes = 0
-        for i in range(2000):
-            f = next_iteration(data)
-            if f == 100:
-                print(i+1)
-                break
-            flashes += f
+        p1, p2 = main(data)
+    print(f"# Part 1: {p1:4}")
+    print(f"# Part 2: {p2:4}")
 
-        print(flashes)
+# Part 1: 1608
+# Part 2:  214
