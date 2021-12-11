@@ -54,3 +54,21 @@ INV = f"{__ESC__}?23l"
 HIDE = f"{__ESC__}8m"
 BLINK_OFF = f"{__ESC__}{25}m"
 HOME = f"{__ESC__}1;1H"
+
+# \033[38;2;<r>;<g>;<b>m     #Select RGB foreground color
+
+
+def RGB(r: int, g: int, b: int) -> str:
+    """Return an ascii escape sequennce for
+    an RGB color based on the given r, g, b, values.
+     - Values from 0 - 255
+
+    Args:
+        r (int): 0-255 value for red
+        g (int): 0-255 value for green
+        b (int): 0-255 value for blue
+
+    Returns:
+        str: RGB colro as \\033[38;2;<r>;<g>;<b>m
+    """
+    return f"{__ESC__}38;2;{r};{g};{b}m"

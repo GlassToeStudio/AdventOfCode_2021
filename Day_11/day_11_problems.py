@@ -370,7 +370,42 @@ first step during which all octopuses flash?
 """
 
 
+import sys  # VIS: This is only for viualization!
 from io import TextIOWrapper
+from os import system  # VIS: This is only for viualization!
+
+from colors import END, RGB, START, UP, YELLOW
+
+lil_octo = "🐙"
+
+
+def print_grid(octopus_grid: list[list[int]], iterartion: int, flashes: int, total_flashes: int) -> None:  # VIS: This is only for viualization!
+    """For printing grid to console
+
+    Args:
+        octopus_grid (list[list[int]]): The grid
+        iterartion (int): current iteration
+        flashes (int): flashes per iteration
+        total_flashes (int): Total flashes
+    """
+
+    sys.stdout.write(f"{START}{UP*40}")
+    print(f"\t{YELLOW}--- Day 11: Dumbo Octopus ---{END}".center(30, " "))
+    print()
+    for r_i, _ in enumerate(octopus_grid):
+        print("\t", end="")
+        for c_i, _ in enumerate(octopus_grid[0]):
+            if octopus_grid[r_i][c_i] == 0:
+                print(f"{RGB(255,255,255)}{str(octopus_grid[r_i][c_i]).center(3,' ')}{END}", end="")
+            else:
+                value = 15 * (octopus_grid[r_i][c_i])
+                print(f"{RGB(value,value,value)}{str(octopus_grid[r_i][c_i]).center(3,' ')}{END}", end="")
+        print()
+    print()
+    print(f"\tIteration: {YELLOW}{iterartion:>3}{END}\tFlashes: {YELLOW}{flashes:>3}{END}")
+    print(f"\tTotal Flashes: {YELLOW}{total_flashes:>4}{END}")
+    print(f"{YELLOW}\t******************************{END}")
+    print(f"\t{lil_octo}  {lil_octo}  {lil_octo}  {lil_octo}  {lil_octo}  {lil_octo}  {lil_octo}  {lil_octo}\n")
 
 
 def format_data(in_file: TextIOWrapper) -> list[list[int]]:
@@ -389,23 +424,24 @@ def format_data(in_file: TextIOWrapper) -> list[list[int]]:
     return output
 
 
-def next_iteration_flahses(octopus_grid: list[list[int]]) -> int:
+def next_iteration_flahses(octopus_grid: list[list[int]], iteration, total_flashes) -> int:  # VIS: This is only for viualization! (iteration, total_flashes)
     flashes = 0
     flashed = []
     for r_i, row in enumerate(octopus_grid):
         for c_i, _ in enumerate(row):
-            octopus_grid, flashed, flashes = update_octopuses(octopus_grid, r_i, c_i, flashed, flashes)
+            octopus_grid, flashed, flashes = update_octopuses(octopus_grid, r_i, c_i, flashed, flashes, iteration, total_flashes)  # VIS: This is only for viualization! (iteration, total_flashes)
 
     return flashes
 
 
-def update_octopuses(octopus_grid: list[list[int]], row: int, column: int, flashed: list[tuple[int, int]], flashes: int) -> tuple[list[list[int]], list[tuple[int, int]], int]:
+def update_octopuses(
+        octopus_grid: list[list[int]], row: int, column: int, flashed: list[tuple[int, int]], flashes: int, iteration, total_flashes) -> tuple[list[list[int]], list[tuple[int, int]], int]:  # noqa E501  # VIS: This is only for viualization! (flashes, iteration, total_flashes)
     """Update the energy level for each octopus in the grid. If the
     Energy level exceeds 9, the octopus will flash. A flash increases
     the octopus' neighbors energy by 1 as well. If their energy level
-    exceeds 9, the flash. This happens until all octopuses have has their
+    exceeds 9, they flash. This happens until all octopuses have has their
     energy increased and reacted to their neighbors action, if any. Return
-    the updated grid, the the octopuses that flashed this iteration, and the number
+    the updated grid, the octopuses that flashed this iteration, and the number
     of flashes caused by increasing this octopus' energy level.
 
     Args:
@@ -419,14 +455,14 @@ def update_octopuses(octopus_grid: list[list[int]], row: int, column: int, flash
         tuple[list[list[int]], list[tuple[int, int]], int]: updated data
     """
 
+    print_grid(octopus_grid, iteration, flashes, total_flashes)  # VIS: This is only for viualization!
     if (row, column) not in flashed:
         octopus_grid[row][column] = (octopus_grid[row][column] + 1) % 10
         if octopus_grid[row][column] == 0:
             flashed.append((row, column))
             flashes += 1
-
             for n_r, n_c in get_neighbors(octopus_grid, row, column):
-                octopus_grid, flashed, flashes = update_octopuses(octopus_grid, n_r, n_c, flashed, flashes)
+                octopus_grid, flashed, flashes = update_octopuses(octopus_grid, n_r, n_c, flashed, flashes, iteration, total_flashes)  # VIS: This is only for viualization!
     return octopus_grid, flashed, flashes
 
 
@@ -465,24 +501,26 @@ def main(octopus_grid: list[list[int]]) -> tuple[int, int]:
         tuple[int, int]: total flashes in 100 iterations and iterations until all flash simultaneously.
     """
 
-    total_flahses = 0
+    total_flashes = 0
     all_flashed = 0
     i = 0
-    while not total_flahses or not all_flashed:
+    while not total_flashes or not all_flashed:
         i += 1
-        flashes = next_iteration_flahses(octopus_grid)
+        flashes = next_iteration_flahses(octopus_grid, i, total_flashes)  # VIS: This is only for viualization! (i, total_flashes)
         if i <= 100:
-            total_flahses += flashes
+            total_flashes += flashes
         if flashes == 100:
             all_flashed = i
 
-    return total_flahses, all_flashed
+    return total_flashes, all_flashed
 
 
 if __name__ == "__main__":
     with open("Day_11/input.txt", "r", encoding="utf-8") as f:
         data = format_data(f)
-        p1, p2 = main(data)
+    _ = system("cls")  # VIS: This is only for viualization!
+    p1, p2 = main(data)
+    print("\n\n\n\n")  # VIS: This is only for viualization!
     print(f"# Part 1: {p1:4}")
     print(f"# Part 2: {p2:4}")
 
