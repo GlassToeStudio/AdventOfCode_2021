@@ -49,16 +49,65 @@ def get_session_id() -> str:
     return os.getenv("SESSION_ID")
 
 
-def get_input_data(url: str, session_id: str) -> list[str]:
+def fix_day(day: str) -> str:
+    """Append a zero [0] in front of day if day is one digit.\n
+    1 -> 01
+
+    Args:
+        day (str): 1, 21, etc.
+
+    Returns:
+        str: 01, 21, etc.
+    """
+
+    return f"0{day}" if len(day) == 1 else day
+
+
+def regex_get_mathces(html_text):
+    # Checks for '--- message ---' and keeps a match of the inner text
+    # '--- message ---'
+    # 'message'
+    # [-]{3}[\s]{1} '--- '
+    # ([\s\w:!]*) 'any characters, whitespace, colon, exclamation'
+    # [\s]{1}[-]{3} ' ---'
+    regex_str = r"([-]{3}[\s]{1}([\s\w:!]*)[\s]{1}[-]{3})"
+    regex = re.compile(regex_str)
+    matches = regex.findall(html_text)
+    return matches
+
+
+def try_make_dir(day: str) -> None:
+    """Try to make a new directory for the given day.\n
+    ./Day_01,\n
+    ./Day_21,\n
+    etc.\n
+    If it exists, just print to console.
+
+    Args:
+        day (str): 01, 21, etc.
+    """
+
+    if os.path.isdir(f"Day_{day}"):
+        print(f"{YELLOW}{BOLD}* Directory exists.{END}")
+    else:
+        os.mkdir(f"Day_{day}")
+
+
+def get_input_data(url: str, session_id: str, day: str) -> list[str]:
     """Get the input data for the given url (day of advent of code)
 
     Args:
         url (str): url of the advent of code problem for a specific day
-        ID (str): session id for logged in user
+        session_id (str): session id for logged in user
+        day (str): 01, 21, etc.
 
     Returns:
         list[str]: the input for a given advent of code problem
     """
+
+    if os.path.exists(f"Day_{day}/input.txt"):
+        print(f"{YELLOW}{BOLD}* Input file exists - Aborting request.{END}")
+        return None
 
     cookies = {
         "session": session_id,
@@ -69,12 +118,59 @@ def get_input_data(url: str, session_id: str) -> list[str]:
     return data
 
 
+def make_input_file(day: str, data: list[str]) -> None:
+    """Save the input data to a file for the given day in its
+    corresponding directory.
+
+    Args:
+        day (str): 01, 21, etc.
+        file (str): file name to save as
+        data (list[str]): the data to save to file
+    """
+
+    with open(f"Day_{day}/input.txt", "w", encoding="utf-8") as input_file:
+        input_file.write(data)
+
+    with open(f"Day_{day}/sample.txt", "a", encoding="utf-8"):
+        # TODO: Find sample data in instruction text.
+        pass
+
+
+def make_python_file(day: str, instructions: str) -> None:
+    """Save the instruction string to a python file for the given
+    day in its corresponding directory. If the file exists, just
+    overwrite the previous instructions with new instructions that
+    include part 2.
+
+    Args:
+        day (str): 01, 21, etc.
+        instructions (str): instructions to be added at the top of python file
+    """
+
+    # If we already made the file, just overwrite the instructions,
+    # keep the code we already wrote.
+    if os.path.exists(f"Day_{day}/day_{day}_problems.py"):
+        print(f"{YELLOW}{BOLD}* Python file exists, editing current file.{END}")
+        with open(f"Day_{day}/day_{day}_problems.py", "r+", encoding="utf-8") as python_file:
+            data = python_file.read()
+            previous_contents = data.split('"""', 2)
+            output = f"\"\"\"\n{instructions}\"\"\"{''.join(previous_contents[2:])}"
+            python_file.seek(0)
+            python_file.truncate(0)
+            python_file.write(output)
+    else:
+        with open(f"Day_{day}/day_{day}_problems.py", "w", encoding="utf-8") as python_file:
+            with open("py_template.txt", "r", encoding="utf-8") as template:
+                output = template.read().replace("{day}", day).replace("{instructions}", instructions)  # noqa E501
+            python_file.write(output)
+
+
 def get_instruction_data(url: str, session_id: str) -> str:
     """Get the instruction text from the given url (day of advent of code)
 
     Args:
         url (str): url of the advent of code problem for a specific day
-        ID (str): session id for logged in user
+        session_id (str): session id for logged in user
 
     Returns:
         str: html text from the given url
@@ -105,16 +201,7 @@ def format_instruction_text(html_text: str) -> str:
     with open("temp", "a+", encoding="utf-8") as temp_file:
         max_line_length = 79
         instructions = []
-
-        # Checks for '--- message ---' and keeps a match of the inner text
-        # '--- message ---'
-        # 'message'
-        # [-]{3}[\s]{1} '--- '
-        # ([\s\w:!]*) 'any characters, whitespace, colon, exclamation'
-        # [\s]{1}[-]{3} ' ---'
-        regex_str = r"([-]{3}[\s]{1}([\s\w:!]*)[\s]{1}[-]{3})"
-        regex = re.compile(regex_str)
-        matches = regex.findall(html_text)
+        matches = regex_get_mathces(html_text)
         title = matches[0][1]
         for match in matches:
             html_text = html_text.replace(match[0], f"\n\n--- {match[1]} ---\n")
@@ -146,87 +233,6 @@ def format_instruction_text(html_text: str) -> str:
     return "".join(instructions), title
 
 
-def fix_day(day: str) -> str:
-    """Append a zero [0] in front of day if day is one digit.\n
-    1 -> 01
-
-    Args:
-        day (str): 1, 21, etc.
-
-    Returns:
-        str: 01, 21, etc.
-    """
-
-    return f"0{day}" if len(day) == 1 else day
-
-
-def try_make_dir(day: str) -> None:
-    """Try to make a new directory for the given day.\n
-    ./Day_01,\n
-    ./Day_21,\n
-    etc.\n
-    If it exists, just print to console.
-
-    Args:
-        day (str): 01, 21, etc.
-    """
-
-    if os.path.isdir(f"Day_{day}"):
-        print(f"{YELLOW}{BOLD}* Directory exists.{END}")
-    else:
-        os.mkdir(f"Day_{day}")
-
-
-def make_input_file(day: str, data: list[str]) -> None:
-    """Save the input data to a file for the given day in its
-    corresponding directory.
-
-    Args:
-        day (str): 01, 21, etc.
-        file (str): file name to save as
-        data (list[str]): the data to save to file
-    """
-
-    if os.path.exists(f"Day_{day}/input.txt"):
-        print(f"{YELLOW}{BOLD}* Input file exists.{END}")
-        return
-
-    with open(f"Day_{day}/input.txt", "w", encoding="utf-8") as input_file:
-        input_file.write(data)
-
-    with open(f"Day_{day}/sample.txt", "a", encoding="utf-8"):
-        pass
-
-
-def make_python_file(day: str, instructions: str) -> None:
-    """Save the instruction string to a python file for the given
-    day in its corresponding directory. If the file exists, just
-    overwrite the previous instructions with new instructions that
-    include part 2.
-
-    Args:
-        day (str): 01, 21, etc.
-        instructions (str): instructions to be added at the top of python file
-    """
-
-    # If we already made the file, just overwrite the instructions,
-    # keep the code we already wrote.
-    if os.path.exists(f"Day_{day}/day_{day}_problems.py"):
-        print(f"{YELLOW}{BOLD}python file exists, editing current file.{END}")
-        with open(f"Day_{day}/day_{day}_problems.py", "r+", encoding="utf-8") as python_file:
-            data = python_file.read()
-            previous_contents = data.split('"""', 2)
-            output = f"\"\"\"\n{instructions}\"\"\"{''.join(previous_contents[2:])}"
-            python_file.seek(0)
-            python_file.truncate(0)
-            python_file.write(output)
-    else:
-        with open(f"Day_{day}/day_{day}_problems.py", "w", encoding="utf-8") as python_file:
-            with open("py_template.txt", "r", encoding="utf-8") as template:
-                output = template.read().replace("{day}", day).replace("{instructions}", instructions)  # noqa E501
-            python_file.write(output)
-
-
 def update_readme(title: str) -> None:
     """Update readme
 
@@ -248,20 +254,35 @@ def main():
 
     day = fix_day(args.day)
     try_make_dir(day)
-    title = ''
+    title = None
 
     if args.input:
-        input_data = get_input_data(aoc_url, session_id)
-        make_input_file(day, input_data)
+        input_data = get_input_data(aoc_url, session_id, day)
+        if input_data:
+            make_input_file(day, input_data)
+
     if args.python:
         instruction_data = get_instruction_data(aoc_url, session_id)
         instructions, title = format_instruction_text(instruction_data)
         make_python_file(day, instructions)
+
     if args.readme:
-        if title == '':
-            print(f"{YELLOW}{BOLD}title is blank, getting instructions.{END}")
-            instruction_data = get_instruction_data(aoc_url, session_id)
-            instructions, title = format_instruction_text(instruction_data)
+        if not title:
+            print(f"{YELLOW}{BOLD}* Title is blank, try getting instructions from python file.{END}")
+
+            if os.path.exists(f"Day_{day}/day_{day}_problems.py"):
+                print(f"{YELLOW}{BOLD}* Python file exists getting instructions from python file.{END}")
+
+                with open(f"Day_{day}/day_{day}_problems.py", "r+", encoding="utf-8") as python_file:
+                    all_text = python_file.read()
+                matches = regex_get_mathces(all_text)
+
+            if matches:
+                title = matches[0][1]
+            else:
+                print(f"{YELLOW}{BOLD}* Python file doesn't exist, getting instructions from AoC.{END}")
+                instruction_data = get_instruction_data(aoc_url, session_id)
+                instructions, title = format_instruction_text(instruction_data)
         update_readme(title)
 
 
