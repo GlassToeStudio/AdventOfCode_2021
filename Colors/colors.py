@@ -483,30 +483,30 @@ def RGB_BG(r: int | str, g: int | str, b: int | str) -> str:
     return f"{__ESC__}48;2;{r};{g};{b}m"
 
 
-def COLOR_256(c: int | str) -> str:
+def COLOR_256(value: int | str) -> str:
     """Change text to 1 of 256 colors.
 
     Args:
-        c (int|str): 0 - 255
+        value (int|str): 0 - 255
 
     Returns:
         str: ESC 38;5;<c>m
     """
 
-    return f"{__ESC__}38;5;{c}m"
+    return f"{__ESC__}38;5;{value}m"
 
 
-def COLOR_256_BG(c: int | str) -> str:
+def COLOR_256_BG(value: int | str) -> str:
     """Change background to 1 of 256 colors.
 
     Args:
-        c (int|str): 0 - 255
+        value (int|str): 0 - 255
 
     Returns:
         str: ESC 48;5;<c>m
     """
 
-    return f"{__ESC__}48;5;{c}m"
+    return f"{__ESC__}48;5;{value}m"
 
 
 def CHAIN_SEQUENCE(*args: str | int) -> str:
