@@ -390,7 +390,7 @@ def print_grid(octopus_grid: list[list[int]], iterartion: int, flashes: int, tot
     """
 
     sys.stdout.write(f"{START_UP(0)}{UP(40)}")
-    print(f"\t{YELLOW}--- Day 11: Dumbo Octopus ---{RESET}".center(30, " "))
+    print(f"\t{YELLOW} --- Day 11: Dumbo Octopus ---{RESET}".center(30, " "))
     print()
     for r_i, _ in enumerate(octopus_grid):
         print("\t", end="")
@@ -402,8 +402,8 @@ def print_grid(octopus_grid: list[list[int]], iterartion: int, flashes: int, tot
                 print(f"{RGB(value,value,value)}{str(octopus_grid[r_i][c_i]).center(3,' ')}{RESET}", end="")
         print()
     print()
-    print(f"\tIteration: {YELLOW}{iterartion:>3}{RESET}\tFlashes: {YELLOW}{flashes:>3}{RESET}")
-    print(f"\tTotal Flashes: {YELLOW}{total_flashes:>4}{RESET}")
+    print(f"\tIteration: {YELLOW}{iterartion:>3}{RESET}\t Flashes: {YELLOW}{flashes:>4}{RESET}")
+    print(f"\tTotal Flashes @ 100 iter: {YELLOW}{total_flashes:>4}{RESET}")
     print(f"{YELLOW}\t******************************{RESET}")
     print(f"\t{lil_octo}  {lil_octo}  {lil_octo}  {lil_octo}  {lil_octo}  {lil_octo}  {lil_octo}  {lil_octo}\n")
 
