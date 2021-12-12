@@ -213,8 +213,7 @@ def find_all_paths(caves: dict[str, list[str]], visit_twice: bool) -> int:
     """
 
     total = 0
-    source = ("start", [], visit_twice)
-    caves_remaining = deque([source])
+    caves_remaining = deque([("start", set(), visit_twice)])
 
     while caves_remaining:
         cave, visited, visit_twice = caves_remaining.popleft()
@@ -235,5 +234,8 @@ def find_all_paths(caves: dict[str, list[str]], visit_twice: bool) -> int:
 if __name__ == "__main__":
     with open("Day_12/input.txt", "r", encoding="utf-8") as f:
         data = format_data(f)
-    print(f"# Part 1: {find_all_paths(data, False)}")
-    print(f"# Part 2: {find_all_paths(data, True)}")
+    print(f"# Part 1: {find_all_paths(data, False):6}")
+    print(f"# Part 2: {find_all_paths(data, True):6}")
+
+# Part 1:   4659
+# Part 2: 148962
