@@ -98,7 +98,7 @@ from io import TextIOWrapper
 from os import system
 
 #                                                               # VIS: This is only for makeing an image!
-from colors import BLACK_BR, BLINK_OFF, END, HOME, INV, RED
+from colors import BLACK_BR, HOME, INV, N_SLOW_BLINK, RED, RESET
 
 #                                                               # VIS: This is only for makeing an image!
 NEW_LINE = "\n"
@@ -342,11 +342,11 @@ if __name__ == "__main__":
         data = format_data(f)
     sys.stdout.write(HOME)
     _ = system('cls')                                               # VIS: This is only for makeing an image!
-    sys.stdout.write(f"{INV}{BLINK_OFF}{BLACK_BR}")                 # VIS: This is only for makeing an image!
+    sys.stdout.write(f"{INV}{N_SLOW_BLINK}{BLACK_BR}")                 # VIS: This is only for makeing an image!
     p1, p2 = main(data)
     print(f"Part 1: {p1:5}")
     print(f"Part 2: {p2:5}\n")
-    sys.stdout.write(END)                                           # VIS: This is only for makeing an image!
+    sys.stdout.write(RESET)                                           # VIS: This is only for makeing an image!
 time.sleep(1)                                                       # VIS: This is only for makeing an image!
 sys.stdout.flush()                                                  # VIS: This is only for makeing an image!
 
