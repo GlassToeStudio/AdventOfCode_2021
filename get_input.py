@@ -8,7 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
-from colors import BLUE, BOLD, END, YELLOW
+from colors import BLUE, BOLD, RESET, YELLOW
 
 
 def get_args() -> argparse.Namespace:
@@ -28,7 +28,7 @@ def get_args() -> argparse.Namespace:
         "**                                                                            **\n"  # noqa: E501
         "********************************************************************************\n"  # noqa: E501
         "********************************************************************************\n"  # noqa: E501
-        f"{END}"
+        f"{RESET}"
     )
 
     parser.add_argument("day", help="Enter the day for the problem you are working on.")  # noqa: E501
@@ -88,7 +88,7 @@ def try_make_dir(day: str) -> None:
     """
 
     if os.path.isdir(f"Day_{day}"):
-        print(f"{YELLOW}{BOLD}* Directory exists.{END}")
+        print(f"{YELLOW}{BOLD}* Directory exists.{RESET}")
     else:
         os.mkdir(f"Day_{day}")
 
@@ -106,7 +106,7 @@ def get_input_data(url: str, session_id: str, day: str) -> list[str]:
     """
 
     if os.path.exists(f"Day_{day}/input.txt"):
-        print(f"{YELLOW}{BOLD}* Input file exists - Aborting request.{END}")
+        print(f"{YELLOW}{BOLD}* Input file exists - Aborting request.{RESET}")
         return None
 
     cookies = {
@@ -150,7 +150,7 @@ def make_python_file(day: str, instructions: str) -> None:
     # If we already made the file, just overwrite the instructions,
     # keep the code we already wrote.
     if os.path.exists(f"Day_{day}/day_{day}_problems.py"):
-        print(f"{YELLOW}{BOLD}* Python file exists, editing current file.{END}")
+        print(f"{YELLOW}{BOLD}* Python file exists, editing current file.{RESET}")
         with open(f"Day_{day}/day_{day}_problems.py", "r+", encoding="utf-8") as python_file:
             data = python_file.read()
             previous_contents = data.split('"""', 2)
@@ -268,10 +268,10 @@ def main():
 
     if args.readme:
         if not title:
-            print(f"{YELLOW}{BOLD}* Title is blank, try getting instructions from python file.{END}")
+            print(f"{YELLOW}{BOLD}* Title is blank, try getting instructions from python file.{RESET}")
 
             if os.path.exists(f"Day_{day}/day_{day}_problems.py"):
-                print(f"{YELLOW}{BOLD}* Python file exists getting instructions from python file.{END}")
+                print(f"{YELLOW}{BOLD}* Python file exists getting instructions from python file.{RESET}")
 
                 with open(f"Day_{day}/day_{day}_problems.py", "r+", encoding="utf-8") as python_file:
                     all_text = python_file.read()
@@ -280,7 +280,7 @@ def main():
             if matches:
                 title = matches[0][1]
             else:
-                print(f"{YELLOW}{BOLD}* Python file doesn't exist, getting instructions from AoC.{END}")
+                print(f"{YELLOW}{BOLD}* Python file doesn't exist, getting instructions from AoC.{RESET}")
                 instruction_data = get_instruction_data(aoc_url, session_id)
                 instructions, title = format_instruction_text(instruction_data)
         update_readme(title)
