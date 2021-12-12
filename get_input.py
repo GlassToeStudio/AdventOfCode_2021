@@ -63,7 +63,7 @@ def fix_day(day: str) -> str:
     return f"0{day}" if len(day) == 1 else day
 
 
-def regex_get_mathces(html_text):
+def regex_get_mathces(html_text: str) -> list[str]:
     # Checks for '--- message ---' and keeps a match of the inner text
     # '--- message ---'
     # 'message'
@@ -93,6 +93,44 @@ def try_make_dir(day: str) -> None:
         os.mkdir(f"Day_{day}")
 
 
+def input_file_exists(day: str) -> bool:
+    return os.path.exists(f"Day_{day}/input.txt")
+
+
+def python_file_exists(day: str) -> bool:
+    return os.path.exists(f"Day_{day}/day_{day}_problems.py")
+
+
+def get_python_file_text(day: str) -> str:
+    with open(f"Day_{day}/day_{day}_problems.py", "r+", encoding="utf-8") as python_file:
+        return python_file.read()
+
+
+def get_title_from_instructions(html_text: str) -> str:
+    matches = regex_get_mathces(html_text)
+    return matches[0][1]
+
+
+def input_file_exists_message() -> None:
+    print(f"{YELLOW}{BOLD}* Input file exists - Aborting request.{RESET}")
+
+
+def no_title_found_message() -> None:
+    print(f"{YELLOW}{BOLD}* Title is blank, try getting instructions from python file.{RESET}")
+
+
+def title_from_python_file_message() -> None:
+    print(f"{YELLOW}{BOLD}* Python file exists getting instructions from python file.{RESET}")
+
+
+def title_from_AoC_message() -> None:
+    print(f"{YELLOW}{BOLD}* Python file doesn't exist, getting instructions from AoC.{RESET}")
+
+
+def editing_python_file_message() -> None:
+    print(f"{YELLOW}{BOLD}* Python file exists, editing current file.{RESET}")
+
+
 def get_input_data(url: str, session_id: str, day: str) -> list[str]:
     """Get the input data for the given url (day of advent of code)
 
@@ -105,8 +143,8 @@ def get_input_data(url: str, session_id: str, day: str) -> list[str]:
         list[str]: the input for a given advent of code problem
     """
 
-    if os.path.exists(f"Day_{day}/input.txt"):
-        print(f"{YELLOW}{BOLD}* Input file exists - Aborting request.{RESET}")
+    if input_file_exists(day):
+        input_file_exists_message()
         return None
 
     cookies = {
@@ -149,8 +187,9 @@ def make_python_file(day: str, instructions: str) -> None:
 
     # If we already made the file, just overwrite the instructions,
     # keep the code we already wrote.
-    if os.path.exists(f"Day_{day}/day_{day}_problems.py"):
-        print(f"{YELLOW}{BOLD}* Python file exists, editing current file.{RESET}")
+    if python_file_exists(day):
+        editing_python_file_message()
+
         with open(f"Day_{day}/day_{day}_problems.py", "r+", encoding="utf-8") as python_file:
             data = python_file.read()
             previous_contents = data.split('"""', 2)
@@ -158,11 +197,13 @@ def make_python_file(day: str, instructions: str) -> None:
             python_file.seek(0)
             python_file.truncate(0)
             python_file.write(output)
-    else:
-        with open(f"Day_{day}/day_{day}_problems.py", "w", encoding="utf-8") as python_file:
-            with open("py_template.txt", "r", encoding="utf-8") as template:
-                output = template.read().replace("{day}", day).replace("{instructions}", instructions)  # noqa E501
-            python_file.write(output)
+        return
+
+    # We have not yet made a python file.
+    with open(f"Day_{day}/day_{day}_problems.py", "w", encoding="utf-8") as python_file:
+        with open("py_template.txt", "r", encoding="utf-8") as template:
+            output = template.read().replace("{day}", day).replace("{instructions}", instructions)  # noqa E501
+        python_file.write(output)
 
 
 def get_instruction_data(url: str, session_id: str) -> str:
@@ -245,6 +286,39 @@ def update_readme(title: str) -> None:
         readme_file.write(output)
 
 
+def do_input_file_tasks(url: str, session_id: str, day: str) -> None:
+    input_data = get_input_data(url, session_id, day)
+    if input_data:
+        make_input_file(day, input_data)
+
+
+def do_python_file_tasks(url: str, session_id: str, day: str) -> str:
+    instruction_data = get_instruction_data(url, session_id)
+    instructions, title = format_instruction_text(instruction_data)
+    make_python_file(day, instructions)
+    return title
+
+
+def do_readme_file_tasks(url: str, session_id: str, day: str, title: str) -> None:
+    if not title:
+        no_title_found_message()
+
+        if python_file_exists(day):
+            title_from_python_file_message()
+
+            all_text = get_python_file_text(day)
+            matches = regex_get_mathces(all_text)
+
+        if matches:
+            title = matches[0][1]
+        else:
+            title_from_AoC_message()
+
+            instruction_data = get_instruction_data(url, session_id)
+            title = get_title_from_instructions(instruction_data)
+    update_readme(title)
+
+
 def main():
     """Main method"""
 
@@ -257,33 +331,13 @@ def main():
     title = None
 
     if args.input:
-        input_data = get_input_data(aoc_url, session_id, day)
-        if input_data:
-            make_input_file(day, input_data)
+        do_input_file_tasks(aoc_url, session_id, day)
 
     if args.python:
-        instruction_data = get_instruction_data(aoc_url, session_id)
-        instructions, title = format_instruction_text(instruction_data)
-        make_python_file(day, instructions)
+        title = do_python_file_tasks(aoc_url, session_id, day)
 
     if args.readme:
-        if not title:
-            print(f"{YELLOW}{BOLD}* Title is blank, try getting instructions from python file.{RESET}")
-
-            if os.path.exists(f"Day_{day}/day_{day}_problems.py"):
-                print(f"{YELLOW}{BOLD}* Python file exists getting instructions from python file.{RESET}")
-
-                with open(f"Day_{day}/day_{day}_problems.py", "r+", encoding="utf-8") as python_file:
-                    all_text = python_file.read()
-                matches = regex_get_mathces(all_text)
-
-            if matches:
-                title = matches[0][1]
-            else:
-                print(f"{YELLOW}{BOLD}* Python file doesn't exist, getting instructions from AoC.{RESET}")
-                instruction_data = get_instruction_data(aoc_url, session_id)
-                instructions, title = format_instruction_text(instruction_data)
-        update_readme(title)
+        do_readme_file_tasks(aoc_url, session_id, day, title)
 
 
 if __name__ == "__main__":
