@@ -246,7 +246,7 @@ def count_dots(folded_paper: list[list[str]]) -> int:
 
 
 if __name__ == "__main__":
-    with open("Day_13/sample.txt", "r", encoding="utf-8") as f:
+    with open("Day_13/input.txt", "r", encoding="utf-8") as f:
         coords, folds = format_data(f)
     grid = make_grid(coords)
     paper = fold_paper(grid, folds[0])
@@ -255,7 +255,7 @@ if __name__ == "__main__":
         paper = fold_paper(paper, fold)
     print(f"# Part 1: {p1}")
     print("# Part 2:")
-    print_grid(grid)
+    print_grid(paper)
 
 # Part 1: 592
 # Part 2:
