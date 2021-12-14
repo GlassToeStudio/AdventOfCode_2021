@@ -144,6 +144,10 @@ What code do you use to activate the infrared thermal imaging camera system?
 
 from io import TextIOWrapper
 
+from colors import (BLACK, DEFAULT,  # VIS: This is only for viualization!
+                    RBG_ORANGE, RGB_BLUE, RGB_GREEN, RGB_INDIGO, RGB_RED,
+                    RGB_VIOLET, RGB_YELLOW)
+
 
 def format_data(in_file: TextIOWrapper) -> tuple[list[list[int]], list[tuple[str, int]]]:
     """Return a list of str from the given text."
@@ -191,13 +195,21 @@ def print_grid(printable_grid: list[list[str]]) -> None:
     Args:
         printable_grid (list[list[str]]): the grid
     """
-
+    # VIS: This is only for viualization!
+    clrs = [BLACK, BLACK, RGB_RED, RGB_RED, RGB_RED, RGB_RED, RGB_RED, RGB_RED,
+            RBG_ORANGE, RBG_ORANGE, RBG_ORANGE, RBG_ORANGE, RBG_ORANGE, RBG_ORANGE,
+            RGB_YELLOW, RGB_YELLOW, RGB_YELLOW, RGB_YELLOW, RGB_YELLOW, RGB_YELLOW,
+            RGB_GREEN, RGB_GREEN, RGB_GREEN, RGB_GREEN, RGB_GREEN, RGB_GREEN,
+            RGB_BLUE, RGB_BLUE, RGB_BLUE, RGB_BLUE, RGB_BLUE, RGB_BLUE,
+            RGB_INDIGO, RGB_INDIGO, RGB_INDIGO, RGB_INDIGO, RGB_INDIGO, RGB_INDIGO,
+            RGB_VIOLET, RGB_VIOLET, RGB_VIOLET, RGB_VIOLET, RGB_VIOLET, RGB_VIOLET]
     print()
-    for row in printable_grid:
-        for column in row:
+    for i, row in enumerate(printable_grid):
+        for j, column in enumerate(row):
+            print(clrs[(j+i) % len(clrs)], end="")  # VIS: This is only for viualization!
             print(column, end="")
         print()
-    print()
+    print(DEFAULT)
 
 
 def fold_paper(unfolded_paper: list[list[str]], fold_line: tuple[str, int]) -> list[list[str]]:
