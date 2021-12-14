@@ -1,6 +1,4 @@
 """
-
-
 --- Day 14: Extended Polymerization ---
 The incredible pressures at this depth are starting to put a strain on your
 submarine. The submarine has polymerization equipment that would produce
@@ -79,79 +77,103 @@ of the most common element and subtract the quantity of the least common
 element?
 
 
+--- Part Two ---
+The resulting polymer isn't nearly strong enough to reinforce the submarine.
+You'll need to run more steps of the pair insertion process; a total of 40
+steps should do it.
+
+In the above example, the most common element is B (occurring 2192039569602
+times) and the least common element is H (occurring 3849876073 times);
+subtracting these produces 2188189693529.
+
+Apply 40 steps of pair insertion to the polymer template and find the most and
+least common elements in the result. What do you get if you take the quantity
+of the most common element and subtract the quantity of the least common
+element?
 """
 
 
-from collections import Counter, defaultdict
+from collections import Counter
 from io import TextIOWrapper
 
 
-def format_data(in_file: TextIOWrapper) -> list[str]:
+def format_data(in_file: TextIOWrapper) -> tuple[str, dict[str, str]]:
     """Return a list of str from the given text."
 
     Args:
         in_file (TextIOWrapper): text file
 
     Returns:
-        list[str]: input data as list[str]
+       tuple[str, dict[str, str]]: template, rules
     """
+
     lines = in_file.readlines()
     template = lines[0].strip()
-    rules = defaultdict(str)
+    rules = {}
     for line in lines[2:]:
-        x, y = line.strip().split(' -> ')
+        x, y = line.strip().split(" -> ")
         rules[x] = y
 
     return template, rules
 
 
-def insert_thing(template, rules):
-    # print(len(template))
-    s = template[0]
-    for i in range(len(template)-1):
-        #print(i, template[i], template[i+1], template[i:i+2])
-        s += f"{rules[template[i:i+2]]}{template[i+1]}"
-    # print(s)
-    return s
+def count_pairs(template: str, rules: dict[str, str], iterations: int) -> int:
+    """Count each time a rule (pair) appears in the template. Then, for
+    every iteration, keep track of how many times the pairs would appear
+    in the template by checking what pairs are already being tracked. Add
+    these pairs to the count. Once all the pairs are counted for every iteration,
+    loop of the final count to count each letter in the pairs. Return
+    The most common letter minus the least common letter.
 
+    Args:
+        template (str): initial string to count pairs
+        rules (dict[str,str]): how to alter each pair
+        iterations (int): number of iterations to count the pairs
 
-def most_common(template):
-    l = template.most_common()
-    most = l[0]
-    least = l[-1]
-    return most[1]-least[1]
+    Returns:
+        int: most common - least common letter.
+    """
 
-
-def count_pairs(template, rules, iterations):
     pair_count = Counter()
-    letter_count = Counter()
-    for i in range(len(template)-1):
-        pair_count[template[i:i+2]] += 1
+    for i in range(len(template) - 1):
+        pair_count[template[i: i + 2]] += 1
 
-    for i in range(iterations):
+    for _ in range(iterations):
         temp_count = Counter()
         for pair in pair_count:
             temp_count[f"{pair[0]}{rules[pair]}"] += pair_count[pair]
             temp_count[f"{rules[pair]}{pair[1]}"] += pair_count[pair]
         pair_count = temp_count
 
+    letter_count = Counter()
     for pair in pair_count:
         letter_count[pair[0]] += pair_count[pair]
     letter_count[template[-1]] += 1
 
-    return letter_count
+    return most_minus_least(letter_count)
+
+
+def most_minus_least(counts: Counter[str, int]) -> int:
+    """From the given counter object, return the most
+    common item - the least common item
+
+    Args:
+        counts (Counter[str, int]): a counter of letters, counts
+
+    Returns:
+        int: most common - least common letter in counts
+    """
+
+    order = counts.most_common()
+    return order[0][1] - order[-1][1]
 
 
 if __name__ == "__main__":
-    with open("Day_14/input.txt", "r", encoding='utf-8') as f:
-        template, rules = format_data(f)
+    with open("Day_14/input.txt", "r", encoding="utf-8") as f:
+        polymer_template, insertion_rules = format_data(f)
 
-        t = template
-        for i in range(10):
-            t = insert_thing(t, rules)
-        p1 = Counter(t)
-        print(most_common(p1))
+    print(f"# Part 1: {count_pairs(polymer_template, insertion_rules, 10):13}")
+    print(f"# Part 2: {count_pairs(polymer_template, insertion_rules, 40):13}")
 
-        p2 = count_pairs(template, rules, 40)
-        p2 = most_common(p2)
-        print(p2)
+# Part 1:          2745
+# Part 2: 3420801168962
