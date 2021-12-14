@@ -342,6 +342,90 @@ HOME = f"{__ESC__}H"
 """Move to home position (1,1 or 0,0) H"""
 
 
+def RGB(r: int | str, g: int | str, b: int | str) -> str:
+    """change the text to an rgb color.
+
+     Note:
+        Values from 0 - 255
+
+    Args:
+        r (int|str): 0-255 value for red
+        g (int|str): 0-255 value for green
+        b (int|str): 0-255 value for blue
+
+    Returns:
+        str: ESC 38;2;<r>;<g>;<b>m
+    """
+
+    return f"{__ESC__}38;2;{r};{g};{b}m"
+
+
+RGB_RED = RGB(255, 0, 0)
+"""Calls RGB(255, 0, 0)"""
+
+RBG_ORANGE = RGB(255, 127, 0)
+"""Calls RGB(255, 127, 0)"""
+
+RGB_YELLOW = RGB(255, 255, 0)
+"""Calls RGB(255, 255, 0)"""
+
+RGB_GREEN = RGB(0, 255, 0)
+"""Calls  RGB(0, 255, 0)"""
+
+RGB_BLUE = RGB(0, 0, 255)
+"""Calls RGB(0, 0, 255)"""
+
+RGB_INDIGO = RGB(75, 0, 130)
+"""Calls RGB(75, 0, 130)"""
+
+RGB_VIOLET = RGB(148, 0, 211)
+"""Calls RGB(148, 0, 211)"""
+
+
+def RGB_BG(r: int | str, g: int | str, b: int | str) -> str:
+    """Change the background to an RGB color.
+
+    Note:
+        Values from 0 - 255
+
+    Args:
+        r (int|str): 0-255 value for red
+        g (int|str): 0-255 value for green
+        b (int|str): 0-255 value for blue
+
+    Returns:
+        str: ESC 48;2;<r>;<g>;<b>m
+    """
+
+    return f"{__ESC__}48;2;{r};{g};{b}m"
+
+
+def COLOR_256(value: int | str) -> str:
+    """Change text to 1 of 256 colors.
+
+    Args:
+        value (int|str): 0 - 255
+
+    Returns:
+        str: ESC 38;5;<c>m
+    """
+
+    return f"{__ESC__}38;5;{value}m"
+
+
+def COLOR_256_BG(value: int | str) -> str:
+    """Change background to 1 of 256 colors.
+
+    Args:
+        value (int|str): 0 - 255
+
+    Returns:
+        str: ESC 48;5;<c>m
+    """
+
+    return f"{__ESC__}48;5;{value}m"
+
+
 def MOVE(rows: int | str, columns: int | str) -> str:
     """Move the curser to row, column.
 
@@ -445,68 +529,6 @@ def MOVE_TO_COLUMN(column: int | str) -> str:
     """
 
     return f"{__ESC__}{column}G"
-
-
-def RGB(r: int | str, g: int | str, b: int | str) -> str:
-    """change the text to an rgb color.
-
-     Note:
-        Values from 0 - 255
-
-    Args:
-        r (int|str): 0-255 value for red
-        g (int|str): 0-255 value for green
-        b (int|str): 0-255 value for blue
-
-    Returns:
-        str: ESC 38;2;<r>;<g>;<b>m
-    """
-
-    return f"{__ESC__}38;2;{r};{g};{b}m"
-
-
-def RGB_BG(r: int | str, g: int | str, b: int | str) -> str:
-    """Change the background to an RGB color.
-
-    Note:
-        Values from 0 - 255
-
-    Args:
-        r (int|str): 0-255 value for red
-        g (int|str): 0-255 value for green
-        b (int|str): 0-255 value for blue
-
-    Returns:
-        str: ESC 48;2;<r>;<g>;<b>m
-    """
-
-    return f"{__ESC__}48;2;{r};{g};{b}m"
-
-
-def COLOR_256(value: int | str) -> str:
-    """Change text to 1 of 256 colors.
-
-    Args:
-        value (int|str): 0 - 255
-
-    Returns:
-        str: ESC 38;5;<c>m
-    """
-
-    return f"{__ESC__}38;5;{value}m"
-
-
-def COLOR_256_BG(value: int | str) -> str:
-    """Change background to 1 of 256 colors.
-
-    Args:
-        value (int|str): 0 - 255
-
-    Returns:
-        str: ESC 48;5;<c>m
-    """
-
-    return f"{__ESC__}48;5;{value}m"
 
 
 def CHAIN_SEQUENCE(*args: str | int) -> str:
