@@ -108,7 +108,7 @@ def format_data(in_file: TextIOWrapper) -> list[str]:
 def insert_thing(template, rules):
     # print(len(template))
     s = template[0]
-    for i in range(0, len(template)-1, 1):
+    for i in range(len(template)-1):
         #print(i, template[i], template[i+1], template[i:i+2])
         s += f"{rules[template[i:i+2]]}{template[i+1]}"
     # print(s)
@@ -116,18 +116,42 @@ def insert_thing(template, rules):
 
 
 def most_common(template):
-    l = Counter(template).most_common()
+    l = template.most_common()
     most = l[0]
     least = l[-1]
     return most[1]-least[1]
 
 
+def count_pairs(template, rules, iterations):
+    pair_count = Counter()
+    letter_count = Counter()
+    for i in range(len(template)-1):
+        pair_count[template[i:i+2]] += 1
+
+    for i in range(iterations):
+        temp_count = Counter()
+        for pair in pair_count:
+            temp_count[f"{pair[0]}{rules[pair]}"] += pair_count[pair]
+            temp_count[f"{rules[pair]}{pair[1]}"] += pair_count[pair]
+        pair_count = temp_count
+
+    for pair in pair_count:
+        letter_count[pair[0]] += pair_count[pair]
+    letter_count[template[-1]] += 1
+
+    return letter_count
+
+
 if __name__ == "__main__":
     with open("Day_14/input.txt", "r", encoding='utf-8') as f:
         template, rules = format_data(f)
-        #print(template, rules)
 
+        t = template
         for i in range(10):
-            template = insert_thing(template, rules)
+            t = insert_thing(t, rules)
+        p1 = Counter(t)
+        print(most_common(p1))
 
-        print(most_common(template))
+        p2 = count_pairs(template, rules, 40)
+        p2 = most_common(p2)
+        print(p2)
