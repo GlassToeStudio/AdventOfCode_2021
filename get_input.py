@@ -7,8 +7,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-
-from colors import BLUE, BOLD, RESET, YELLOW
+from gts_colors.colors import BLUE, BOLD, RESET, YELLOW
 
 
 def get_args() -> argparse.Namespace:

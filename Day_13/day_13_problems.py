@@ -144,9 +144,9 @@ What code do you use to activate the infrared thermal imaging camera system?
 
 from io import TextIOWrapper
 
-from colors import (BLACK, DEFAULT,  # VIS: This is only for viualization!
-                    RBG_ORANGE, RGB_BLUE, RGB_GREEN, RGB_INDIGO, RGB_RED,
-                    RGB_VIOLET, RGB_YELLOW)
+from gts_colors.colors import (BLACK,  # VIS: This is only for viualization!
+                               DEFAULT, RBG_ORANGE, RGB_BLUE, RGB_GREEN,
+                               RGB_INDIGO, RGB_RED, RGB_VIOLET, RGB_YELLOW)
 
 
 def format_data(in_file: TextIOWrapper) -> tuple[list[list[int]], list[tuple[str, int]]]:

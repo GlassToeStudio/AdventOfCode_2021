@@ -98,7 +98,7 @@ from io import TextIOWrapper
 from os import system
 
 #                                                               # VIS: This is only for makeing an image!
-from colors import BLACK_BR, HOME, INV, N_SLOW_BLINK, RED, RESET
+from gts_colors.colors import BLACK_BR, HOME, INV, N_SLOW_BLINK, RED, RESET
 
 #                                                               # VIS: This is only for makeing an image!
 NEW_LINE = "\n"

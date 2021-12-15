@@ -374,7 +374,7 @@ import sys  # VIS: This is only for viualization!
 from io import TextIOWrapper
 from os import system  # VIS: This is only for viualization!
 
-from colors import RESET, RGB, START_UP, UP, YELLOW
+from gts_colors.colors import RESET, RGB, START_UP, UP, YELLOW
 
 lil_octo = "🐙"
 
