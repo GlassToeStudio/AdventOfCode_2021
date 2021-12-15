@@ -144,8 +144,8 @@ What code do you use to activate the infrared thermal imaging camera system?
 
 from io import TextIOWrapper
 
-from gts_colors.colors import (BLACK,  # VIS: This is only for viualization!
-                               DEFAULT, RBG_ORANGE, RGB_BLUE, RGB_GREEN,
+from gts_colors.colors import BLACK  # VIS: This is only for viualization!
+from gts_colors.colors import (DEFAULT, RBG_ORANGE, RGB_BLUE, RGB_GREEN,
                                RGB_INDIGO, RGB_RED, RGB_VIOLET, RGB_YELLOW)
 
 

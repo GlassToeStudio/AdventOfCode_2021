@@ -374,7 +374,7 @@ import sys  # VIS: This is only for viualization!
 from io import TextIOWrapper
 from os import system  # VIS: This is only for viualization!
 
-from gts_colors.colors import RESET, RGB, START_UP, UP, YELLOW
+from gts_colors.colors import RESET, YELLOW, rgb, start_up, up
 
 lil_octo = "🐙"
 
@@ -389,17 +389,17 @@ def print_grid(octopus_grid: list[list[int]], iterartion: int, flashes: int, tot
         total_flashes (int): Total flashes
     """
 
-    sys.stdout.write(f"{START_UP(0)}{UP(40)}")
+    sys.stdout.write(f"{start_up(0)}{up(40)}")
     print(f"\t{YELLOW} --- Day 11: Dumbo Octopus ---{RESET}".center(30, " "))
     print()
     for r_i, _ in enumerate(octopus_grid):
         print("\t", end="")
         for c_i, _ in enumerate(octopus_grid[0]):
             if octopus_grid[r_i][c_i] == 0:
-                print(f"{RGB(255,255,255)}{str(octopus_grid[r_i][c_i]).center(3,' ')}{RESET}", end="")
+                print(f"{rgb(255,255,255)}{str(octopus_grid[r_i][c_i]).center(3,' ')}{RESET}", end="")
             else:
                 value = 15 * (octopus_grid[r_i][c_i])
-                print(f"{RGB(value,value,value)}{str(octopus_grid[r_i][c_i]).center(3,' ')}{RESET}", end="")
+                print(f"{rgb(value,value,value)}{str(octopus_grid[r_i][c_i]).center(3,' ')}{RESET}", end="")
         print()
     print()
     print(f"\tIteration: {YELLOW}{iterartion:>3}{RESET}\t Flashes: {YELLOW}{flashes:>4}{RESET}")

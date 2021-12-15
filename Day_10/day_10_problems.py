@@ -149,7 +149,7 @@ import time
 from io import TextIOWrapper
 from os import system
 
-from gts_colors.colors import BLACK_BG, GREEN, RED, RESET, UP, WHITE_BG, YELLOW
+from gts_colors.colors import BLACK_BG, GREEN, RED, RESET, WHITE_BG, YELLOW, up
 
 
 def format_data(in_file: TextIOWrapper) -> list[str]:
@@ -202,7 +202,7 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
             # Opening bracket found, add to the end of list
             if character in chunk_pairs:
                 chunks_open.append(character)
-                sys.stdout.write(f"{UP(1)}")  # VIS: This is only for viualization!
+                sys.stdout.write(f"{up(1)}")  # VIS: This is only for viualization!
                 print(f"{GREEN}{p_line[0:i]}{WHITE_BG}{p_line[i]}{RESET}{p_line[i+1:]}")  # VIS: This is only for viualization!
                 i += 1  # VIS: This is only for viualization!
                 time.sleep(0.001)  # VIS: This is only for viualization!
@@ -211,7 +211,7 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
             # Matching closing bracket found, remove opening bracket from end of list.
             if character == chunk_pairs[chunks_open[-1]]:
                 chunks_open.pop()
-                sys.stdout.write(f"{UP(1)}")  # VIS: This is only for viualization!
+                sys.stdout.write(f"{up(1)}")  # VIS: This is only for viualization!
                 print(f'{f"{GREEN}{p_line[0:i]}{BLACK_BG}{p_line[i]}{RESET}{p_line[i+1:]}":120}')  # VIS: This is only for viualization!
                 i += 1  # VIS: This is only for viualization!
                 continue
@@ -220,7 +220,7 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
             # Calculate the points for the corrupt line and reset
             # the chunks open. Break and go to next line.
             points += point_dict_corrupt[character]
-            sys.stdout.write(f"{UP(1)}")  # VIS: This is only for viualization!
+            sys.stdout.write(f"{up(1)}")  # VIS: This is only for viualization!
             print(f'{f"{GREEN}{p_line[0:i]}{BLACK_BG}{RED}{p_line[i]}{RESET}{p_line[i+1:]}":132} : {YELLOW}{chunk_pairs[chunks_open[-1]]:10}{RESET}')  # VIS: This is only for viualization!
             print()  # VIS: This is only for viualization!
             chunks_open = None
@@ -230,7 +230,7 @@ def find_corrupt_and_incomplete_line_scores(navigation_subsystem: list[list[str]
         # Find the required closing chunks and add the
         # sequence to the list.
         if chunks_open:
-            sys.stdout.write(f"{UP(1)}")  # VIS: This is only for viualization!
+            sys.stdout.write(f"{up(1)}")  # VIS: This is only for viualization!
             print(f'{f"{GREEN}{p_line[0:i]}{RESET}":120} : {YELLOW}{"".join([chunk_pairs[x] for x in reversed(chunks_open)]):10}{RESET}')  # VIS: This is only for viualization!
             print()  # VIS: This is only for viualization!
             finsihing_sequence.append([chunk_pairs[x] for x in reversed(chunks_open)])
