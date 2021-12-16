@@ -1,6 +1,4 @@
 """
-
-
 --- Day 16: Packet Decoder ---
 As you leave the cave and reach open waters, you receive a transmission from
 the Elves back on the ship.
@@ -177,9 +175,66 @@ Decode the structure of your hexadecimal-encoded BITS transmission; what do you
 get if you add up the version numbers in all packets?
 
 
+
+--- Part Two ---
+Now that you have the structure of your transmission decoded, you can calculate
+the value of the expression it represents.
+
+Literal values (type ID 4) represent a single number as described above. The
+remaining type IDs are more interesting:
+
+
+Packets with type ID 0 are sum packets - their value is the sum of the values
+of their sub-packets. If they only have a single sub-packet, their value is
+the value of the sub-packet.
+
+Packets with type ID 1 are product packets - their value is the result of
+multiplying together the values of their sub-packets. If they only have a
+single sub-packet, their value is the value of the sub-packet.
+
+Packets with type ID 2 are minimum packets - their value is the minimum of the
+values of their sub-packets.
+
+Packets with type ID 3 are maximum packets - their value is the maximum of the
+values of their sub-packets.
+
+Packets with type ID 5 are greater than packets - their value is 1 if the value
+of the first sub-packet is greater than the value of the second sub-packet;
+otherwise, their value is 0. These packets always have exactly two
+sub-packets.
+
+Packets with type ID 6 are less than packets - their value is 1 if the value of
+the first sub-packet is less than the value of the second sub-packet;
+otherwise, their value is 0. These packets always have exactly two
+sub-packets.
+
+Packets with type ID 7 are equal to packets - their value is 1 if the value of
+the first sub-packet is equal to the value of the second sub-packet;
+otherwise, their value is 0. These packets always have exactly two
+sub-packets.
+
+
+Using these rules, you can now work out the value of the outermost packet in
+your BITS transmission.
+
+For example:
+
+C200B40A82 finds the sum of 1 and 2, resulting in the value 3.
+04005AC33890 finds the product of 6 and 9, resulting in the value 54.
+880086C3E88112 finds the minimum of 7, 8, and 9, resulting in the value 7.
+CE00C43D881120 finds the maximum of 7, 8, and 9, resulting in the value 9.
+D8005AC2A8F0 produces 1, because 5 is less than 15.
+F600BC2D8F produces 0, because 5 is not greater than 15.
+9C005AC2F8F0 produces 0, because 5 is not equal to 15.
+9C0141080250320F1802104A08 produces 1, because 1 + 3 = 2 * 2.
+
+What do you get if you evaluate the expression represented by your
+hexadecimal-encoded BITS transmission?
+
 """
 
 
+import math
 from io import TextIOWrapper
 
 hex_to_binary = {
@@ -236,7 +291,7 @@ def format_data(in_file: TextIOWrapper) -> list[str]:
 
 def convert_hex_to_bin(packet):
     b = hex_to_binary[packet]
-    print(f"- {packet}: {b}")
+    # print(f"- {packet}: {b}")
     return b
 
 
@@ -260,78 +315,146 @@ def convert_to_number(bit):
         return n, True
 
 
-def part1(packet, versions):
+def decode_packet(packet, versions, values):
     version = get_packet_version(packet[:3])
     packet_type = get_packet_type(packet[3:6])
     versions.append(int(version))
-    print(" -- ************************************* --")
-    print(f" -- {packet=}")
-    print(f" -- {version=}")
+    # print(" -- ************************************* --")
+    # print(f" -- {packet=}")
+    # print(f" -- {version=}")
     print(f" -- {packet_type=}")
-    packet = read_packet(packet[6:], packet_type, versions)
-    return packet
+    packet, values = read_packet(packet[6:], packet_type, versions, values)
+    return packet, values
 
 
-def read_packet(packet, type, versions):
-    if type == '4':
-        print("********** Literal")
-        print(f"{packet=}")
+def check_type_id_and_values(type_id, values, i):
+    print(i)
+    i = -i
+    if type_id == '0':
+        print(type_id, values)
+        if len(values) == 2:
+            values = [sum(values)]
+        if len(values) > 2:
+            values = [*values[:i], sum(values[i:])]
+        print(type_id, values)
+
+        pass
+    if type_id == '1':
+        print(type_id, values)
+        if len(values) == 2:
+            values = [math.prod(values)]
+        if len(values) > 2:
+            values = [*values[:i], math.prod(values[i:])]
+        print(type_id, values)
+        pass
+    if type_id == '2':
+        print(type_id, values)
+
+        if len(values) == 2:
+            values = [min(values)]
+        if len(values) > 2:
+            values = [*values[:i], min(values[i:])]
+        print(type_id, values)
+        pass
+    if type_id == '3':
+        print(type_id, values)
+        if len(values) == 2:
+            values = [max(values)]
+        if len(values) > 2:
+            values = [*values[:i], max(values[i:])]
+        print(type_id, values)
+        pass
+    if type_id == '5':
+        print(type_id, values)
+        a = values.pop()
+        b = values.pop()
+        values.append(1 if b > a else 0)
+        print(type_id, values)
+        pass
+    if type_id == '6':
+        print(type_id, values)
+        a = values.pop()
+        b = values.pop()
+        values.append(1 if b < a else 0)
+        print(type_id, values)
+        pass
+    if type_id == '7':
+        print(type_id, values)
+        a = values.pop()
+        b = values.pop()
+        values.append(1 if b == a else 0)
+        print(type_id, values)
+        pass
+    return values
+
+
+def read_packet(packet, type_id, versions, values):
+    if type_id == '4':
+        # print("********** Literal")
+        # print(f"{packet=}")
         nums = ''
         for i in range(0, len(packet), 5):
-            print(i)
+            # print(i)
             num = packet[i:i+5]
-            print(f"{num=}")
+            # print(f"{num=}")
             n, end_of_packet = convert_to_number(num)
-            print(f"{n=}")
+            # print(f"{n=}")
             nums += n
             if end_of_packet:
-                print(f"{nums=}")
-                print(f"{int(nums, 2)=}")
-                return packet[i+5:]
+                # print(f"{nums=}")
+                values.append(int(nums, 2))
+                to_return = packet[i+5:]
+                break
 
-        print(int(nums, 2))
+        # print(int(nums, 2))
     else:
-        print(" ********** Operator")
-        print(f"{packet=}")
+        to_return = None
+        # print(" ********** Operator")
+        # print(f"{packet=}")
         if packet[0] == '0':
-            print(f"{packet[0]=} Type : length of each subpacket")
+            # print(f"{packet[0]=} Type : length of each subpacket")
             # the next 15 bits are a number that represents the
             # total length in bits of the sub-packets
             # contained by this packet
-            length_in_bits = packet[1:16]
-            length_in_bits = int(length_in_bits, 2)
-            print(f"{length_in_bits=}")
-            packet = packet[16:]
-            t = packet
-            while len(t) > 7:
-                t = part1(t[:length_in_bits], versions)
 
-            return packet[length_in_bits:]
+            length_in_bits = int(packet[1:16], 2)
+            # print(f"{length_in_bits=}")
+            packet = packet[16:]
+            sub_packet = packet
+            i = 0
+            while len(sub_packet) > 7:
+                sub_packet, values = decode_packet(sub_packet[:length_in_bits], versions, values)
+                i += 1
+            values = check_type_id_and_values(type_id, values, i)
+            to_return = packet[length_in_bits:]
         else:
             # the next 11 bits are a number that represents
             # the number of sub-packets immediately contained
             # by this packet.
-            print(f"{packet[0]=} Type = number of subpacket")
-            number_of_subpackets = packet[1:12]
-            number_of_subpackets = int(number_of_subpackets, 2)
-            print(len(packet[12:]))
-            print(f"{number_of_subpackets=}")
-            packet = packet[12:]
-            for i in range(number_of_subpackets):
-                packet = part1(packet, versions)
-            return packet[:]
+            # print(f"{packet[0]=} Type = number of subpacket")
+            number_of_subpackets = int(packet[1:12], 2)
+            # print(f"{number_of_subpackets=}")
+            sub_packet = packet[12:]
+
+            for _ in range(number_of_subpackets):
+                sub_packet, values = decode_packet(sub_packet, versions, values)
+
+            values = check_type_id_and_values(type_id, values, number_of_subpackets)
+            packet = sub_packet
+            to_return = packet
+
+    return to_return, values
 
 
 if __name__ == "__main__":
     with open("Day_16/input.txt", "r", encoding='utf-8') as f:
         data = format_data(f)
-        print(data)
+        # print(data)
         versions = []
+        values = []
         packet = ''
         for char in data:
             packet += (convert_hex_to_bin(char))
-        part1(packet, versions)
+        packet, values = decode_packet(packet, versions, values)
+        print(f"{values=}")
         print(sum(versions))
-
-# 100010100000000001001010100000000001101010000000000000101111010001111000'
-#                                                 000000101111010001111000'
