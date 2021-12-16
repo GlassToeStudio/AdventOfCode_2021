@@ -253,7 +253,7 @@ hex_to_binary = {
     "C": "1100",
     "D": "1101",
     "E": "1110",
-    "F": "1111"
+    "F": "1111",
 }
 
 binary_to_hex = {
@@ -272,7 +272,7 @@ binary_to_hex = {
     "1100": "C",
     "1101": "D",
     "1110": "E",
-    "1111": "F"
+    "1111": "F",
 }
 
 
@@ -290,171 +290,88 @@ def format_data(in_file: TextIOWrapper) -> list[str]:
 
 
 def convert_hex_to_bin(packet):
-    b = hex_to_binary[packet]
-    # print(f"- {packet}: {b}")
-    return b
+    return hex_to_binary[packet]
 
 
 def get_packet_version(bit):
-    h = binary_to_hex[bit.zfill(4)]
-    return h
+    return binary_to_hex[bit.zfill(4)]
 
 
 def get_packet_type(bit):
-    """ 4 is literal anything else is operator"""
-    h = binary_to_hex[bit.zfill(4)]
-    return h
+    return get_packet_version(bit)
 
 
 def convert_to_number(bit):
-    if bit[0] == "1":
-        n = bit[1:]
-        return n, False
-    else:
-        n = bit[1:5]
-        return n, True
+    return bit[1:5], bit[0] == "0"
 
 
-def decode_packet(packet, versions, values):
-    version = get_packet_version(packet[:3])
-    packet_type = get_packet_type(packet[3:6])
-    versions.append(int(version))
-    # print(" -- ************************************* --")
-    # print(f" -- {packet=}")
-    # print(f" -- {version=}")
-    print(f" -- {packet_type=}")
-    packet, values = read_packet(packet[6:], packet_type, versions, values)
-    return packet, values
-
-
-def check_type_id_and_values(type_id, values, i):
-    print(i)
+def get_values_from_operator_functions(type_id, values, i):
     i = -i
-    if type_id == '0':
-        print(type_id, values)
-        if len(values) == 2:
-            values = [sum(values)]
-        if len(values) > 2:
-            values = [*values[:i], sum(values[i:])]
-        print(type_id, values)
-
-        pass
-    if type_id == '1':
-        print(type_id, values)
-        if len(values) == 2:
-            values = [math.prod(values)]
-        if len(values) > 2:
-            values = [*values[:i], math.prod(values[i:])]
-        print(type_id, values)
-        pass
-    if type_id == '2':
-        print(type_id, values)
-
-        if len(values) == 2:
-            values = [min(values)]
-        if len(values) > 2:
-            values = [*values[:i], min(values[i:])]
-        print(type_id, values)
-        pass
-    if type_id == '3':
-        print(type_id, values)
-        if len(values) == 2:
-            values = [max(values)]
-        if len(values) > 2:
-            values = [*values[:i], max(values[i:])]
-        print(type_id, values)
-        pass
-    if type_id == '5':
-        print(type_id, values)
-        a = values.pop()
-        b = values.pop()
-        values.append(1 if b > a else 0)
-        print(type_id, values)
-        pass
-    if type_id == '6':
-        print(type_id, values)
-        a = values.pop()
-        b = values.pop()
-        values.append(1 if b < a else 0)
-        print(type_id, values)
-        pass
-    if type_id == '7':
-        print(type_id, values)
-        a = values.pop()
-        b = values.pop()
-        values.append(1 if b == a else 0)
-        print(type_id, values)
-        pass
+    if type_id == "0":
+        values = [*values[:i], sum(values[i:])]
+    if type_id == "1":
+        values = [*values[:i], math.prod(values[i:])]
+    if type_id == "2":
+        values = [*values[:i], min(values[i:])]
+    if type_id == "3":
+        values = [*values[:i], max(values[i:])]
+    if type_id == "5":
+        values.append(1 if values.pop() < values.pop() else 0)
+    if type_id == "6":
+        values.append(1 if values.pop() > values.pop() else 0)
+    if type_id == "7":
+        values.append(1 if values.pop() == values.pop() else 0)
     return values
 
 
-def read_packet(packet, type_id, versions, values):
-    if type_id == '4':
-        # print("********** Literal")
-        # print(f"{packet=}")
-        nums = ''
-        for i in range(0, len(packet), 5):
-            # print(i)
-            num = packet[i:i+5]
-            # print(f"{num=}")
-            n, end_of_packet = convert_to_number(num)
-            # print(f"{n=}")
-            nums += n
+def decode_packet(packet, values):
+    versions.append(int(get_packet_version(packet[:3])))
+    packet_type = get_packet_type(packet[3:6])
+    packet, values = read_packet(packet[6:], packet_type, values)
+    return packet, values
+
+
+def read_packet(packet, type_id, values):
+    if type_id == "4":
+        total_number_bits = ""
+        for total_subpackets in range(0, len(packet), 5):
+            number_bit = packet[total_subpackets: total_subpackets + 5]
+            number_bit, end_of_packet = convert_to_number(number_bit)
+            total_number_bits += number_bit
             if end_of_packet:
-                # print(f"{nums=}")
-                values.append(int(nums, 2))
-                to_return = packet[i+5:]
+                values.append(int(total_number_bits, 2))
+                packet = packet[total_subpackets + 5:]
                 break
-
-        # print(int(nums, 2))
     else:
-        to_return = None
-        # print(" ********** Operator")
-        # print(f"{packet=}")
-        if packet[0] == '0':
-            # print(f"{packet[0]=} Type : length of each subpacket")
-            # the next 15 bits are a number that represents the
-            # total length in bits of the sub-packets
-            # contained by this packet
-
+        if packet[0] == "0":
             length_in_bits = int(packet[1:16], 2)
-            # print(f"{length_in_bits=}")
-            packet = packet[16:]
-            sub_packet = packet
-            i = 0
-            while len(sub_packet) > 7:
-                sub_packet, values = decode_packet(sub_packet[:length_in_bits], versions, values)
-                i += 1
-            values = check_type_id_and_values(type_id, values, i)
-            to_return = packet[length_in_bits:]
+            sub_packet = packet[16:]
+            total_subpackets = 0
+            while len(sub_packet) > 7:  # This is sort of arbitrary
+                sub_packet, values = decode_packet(sub_packet[:length_in_bits], values)
+                total_subpackets += 1
+            values = get_values_from_operator_functions(type_id, values, total_subpackets)
+            packet = packet[16 + length_in_bits:]
         else:
-            # the next 11 bits are a number that represents
-            # the number of sub-packets immediately contained
-            # by this packet.
-            # print(f"{packet[0]=} Type = number of subpacket")
             number_of_subpackets = int(packet[1:12], 2)
-            # print(f"{number_of_subpackets=}")
             sub_packet = packet[12:]
-
             for _ in range(number_of_subpackets):
-                sub_packet, values = decode_packet(sub_packet, versions, values)
-
-            values = check_type_id_and_values(type_id, values, number_of_subpackets)
+                sub_packet, values = decode_packet(sub_packet, values)
+            values = get_values_from_operator_functions(type_id, values, number_of_subpackets)
             packet = sub_packet
-            to_return = packet
 
-    return to_return, values
+    return packet, values
 
 
 if __name__ == "__main__":
-    with open("Day_16/input.txt", "r", encoding='utf-8') as f:
+    with open("Day_16/input.txt", "r", encoding="utf-8") as f:
         data = format_data(f)
-        # print(data)
-        versions = []
-        values = []
-        packet = ''
-        for char in data:
-            packet += (convert_hex_to_bin(char))
-        packet, values = decode_packet(packet, versions, values)
-        print(f"{values=}")
-        print(sum(versions))
+    versions = []
+    values = []
+    packet = "".join([convert_hex_to_bin(char) for char in data])
+    _, values = decode_packet(packet, values)
+    print(f"# Part 1: {sum(versions):12}")
+    print(f"# Part 2: {values[0]:12}")
+
+# Part 1:          947
+# Part 2: 660797830937
