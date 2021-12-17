@@ -7,7 +7,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from gts_colors.colors import BLUE, BOLD, RESET, YELLOW
+from gts_colors.colors import (BLUE, BOLD, DEFAULT, GREEN, N_BOLD, RED, RESET,
+                               RGB_ORANGE, RGB_RED, UP_SAME, YELLOW)
 
 
 def get_args() -> argparse.Namespace:
@@ -17,23 +18,24 @@ def get_args() -> argparse.Namespace:
         argparse.Namespace: args
     """
 
+    print(f"\n\n{BOLD}{GREEN}", end="")
     parser = argparse.ArgumentParser(
-        f"\n{BLUE}{BOLD}"
+        f"\n{BLUE}"
         "********************************************************************************\n"  # noqa: E501
         "********************************************************************************\n"  # noqa: E501
         "**                                                                            **\n"  # noqa: E501
-        "**  Will get the input file and create a boilerplate python file for a given  **\n"  # noqa: E501
-        "**                           Advent of Code problem.                          **\n"  # noqa: E501
+        f"**{N_BOLD}  Will get the input file and create a boilerplate python file for a given  {BOLD}**\n"  # noqa: E501
+        f"**{N_BOLD}                           Advent of Code problem.                          {BOLD}**\n"  # noqa: E501
         "**                                                                            **\n"  # noqa: E501
         "********************************************************************************\n"  # noqa: E501
         "********************************************************************************\n"  # noqa: E501
-        f"{RESET}"
+        f"{RESET}{RGB_ORANGE}"
     )
 
-    parser.add_argument("day", help="Enter the day for the problem you are working on.")  # noqa: E501
+    parser.add_argument("day", help=f"{RED}{BOLD}Enter the day for the problem you are working on.{RGB_ORANGE}{N_BOLD}")  # noqa: E501
     parser.add_argument("-i", "--input", help="Create the input file.", action="store_true")  # noqa: E501
     parser.add_argument("-p", "--python", help="Create the python template.", action="store_true")  # noqa: E501
-    parser.add_argument("-r", "--readme", help="Populate readme with tempalte data.", action="store_true")  # noqa: E501
+    parser.add_argument("-r", "--readme", help=f"Populate readme with tempalte data.{RESET}", action="store_true")  # noqa: E501
     return parser.parse_args()
 
 
@@ -41,6 +43,7 @@ def get_session_id() -> str:
     """Get the session ID from the .env file.
 
     Returns:
+
         str: session id for logged in user
     """
 
@@ -320,7 +323,6 @@ def do_readme_file_tasks(url: str, session_id: str, day: str, title: str) -> Non
 
 def main():
     """Main method"""
-
     args = get_args()
     aoc_url = f"https://adventofcode.com/2021/day/{args.day}"
     session_id = get_session_id()
