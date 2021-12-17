@@ -187,9 +187,9 @@ def format_data(in_file: TextIOWrapper) -> list[str]:
     Returns:
         list[str]: input data as list[str]
     """
-    xs, ys = (in_file.read().strip()[15:].replace('y=', '')).split(',')
-    x1, x2 = xs.split('..')
-    y1, y2 = ys.split('..')
+    xs, ys = (in_file.read().strip()[15:].replace("y=", "")).split(",")
+    x1, x2 = xs.split("..")
+    y1, y2 = ys.split("..")
 
     return (int(x1), int(x2), int(y1), int(y2))
 
@@ -203,56 +203,59 @@ def adjust_velocity(x, y):
     return x, y
 
 
-def in_range(x, y, target_area):
+def in_target_area(x, y, target_area):
     x1, x2, y1, y2 = target_area
-    return (x1 <= x <= x2 and y1 <= y <= y2)
+    return x1 <= x <= x2 and y1 <= y <= y2
 
 
 def missed_target(x, y, target_area):
-    x1, x2, y1, y2 = target_area
-    if y < y1:
-        return True
-    if x > x2:
-        return True
-    return False
+    _, x2, y1, _ = target_area
+    return y < y1 or x > x2
 
 
 def try_trajectories(target_area):
-    good = set()
-    best_ys = {}
-    for _x in range(0, 1000):
-        for _y in range(-1000, 1000):
-            x = _x
-            y = _y
-            pos_x = 0
-            pos_y = 0
-            all_ys = []
-            for i in range(1, 1000):
-                pos_x += x
-                pos_y += y
-                all_ys.append(pos_y)
-                # print(pos_x, pos_y)
-                if in_range(pos_x, pos_y, target_area):
-                    good.add((_x, _y))
-                    best_ys[(_x, _y)] = max(all_ys)
-                if missed_target(pos_x, pos_y, target_area):
+    _, x2, y1, _ = target_area
+    sucesses = set()
+    best_hieghts = {}
+    # min_x =  didnt bother to calc this
+    max_x = x2 + 1  # An x velocity faster than this would pass the target area after the first step
+    min_y = y1  # A y velcoity faster than this would never be in the target area at any step
+    max_y = abs(y1) + 1  # A y velcoity faster than this would never be in the target area at any step
+    max_t = max_y * 2  # The max time step is twice the max y velocity, time to go up = time to go down.
+
+    for vx_i in range(1, max_x):
+        for vy_i in range(min_y, max_y):
+
+            vx_f = vx_i
+            vy_f = vy_i
+            dx = dy = 0
+            height_record = [0]
+
+            for _ in range(1, max_t):
+                dx += vx_f
+                dy += vy_f
+
+                if missed_target(dx, dy, target_area):
                     break
-                x, y = adjust_velocity(x, y)
-    # print(best_ys)
-    print(f"{len(good)=}")
-    k = max(best_ys, key=best_ys.get)
-    print(k, best_ys[k])
+
+                if in_target_area(dx, dy, target_area):
+                    sucesses.add((vx_i, vy_i))
+                    best_hieghts[(vx_i, vy_i)] = max(height_record)
+                    break
+
+                height_record.append(dy)
+                vx_f, vy_f = adjust_velocity(vx_f, vy_f)
+
+    k = max(best_hieghts, key=best_hieghts.get)
+    return best_hieghts[k], len(sucesses)
 
 
 if __name__ == "__main__":
-    with open("Day_17/input.txt", "r", encoding='utf-8') as f:
+    with open("Day_17/input.txt", "r", encoding="utf-8") as f:
         data = format_data(f)
-        print(data)
-        try_trajectories(data)
+    p1, p2 = try_trajectories(data)
+    print(f"# Part 1: {p1:4}")
+    print(f"# Part 2: {p2:4}")
 
-
-# 7, 2
-# 6, 3
-# 9, 0
-# 6, 9
-# too high 1816
+# Part 1: 5253
+# Part 2: 1702
