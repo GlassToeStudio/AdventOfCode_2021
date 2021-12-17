@@ -1,6 +1,4 @@
 """
-
-
 --- Day 17: Trick Shot ---
 You finally decode the Elves' message. HI, the message says. You continue
 searching for the sleigh keys.
@@ -139,10 +137,6 @@ and still eventually be within the target area after any step. What is the
 highest y position it reaches on this trajectory?
 
 
-Your puzzle answer was 5253.The first half of this puzzle is complete! It
-provides one gold star: *
-
-
 
 --- Part Two ---
 Maybe a fancy trick shot isn't the best idea; after all, you only have one
@@ -215,12 +209,12 @@ def missed_target(x, y, target_area):
 
 def try_trajectories(target_area):
     _, x2, y1, _ = target_area
-    sucesses = set()
+    successes = set()
     best_hieghts = {}
-    # min_x =  didnt bother to calc this
+    # min_x =  didn't bother to calculate this
     max_x = x2 + 1  # An x velocity faster than this would pass the target area after the first step
-    min_y = y1  # A y velcoity faster than this would never be in the target area at any step
-    max_y = abs(y1) + 1  # A y velcoity faster than this would never be in the target area at any step
+    min_y = y1  # A y velocity faster than this would never be in the target area at any step
+    max_y = abs(y1) + 1  # A y velocity faster than this would never be in the target area at any step
     max_t = max_y * 2  # The max time step is twice the max y velocity, time to go up = time to go down.
 
     for vx_i in range(1, max_x):
@@ -239,7 +233,7 @@ def try_trajectories(target_area):
                     break
 
                 if in_target_area(dx, dy, target_area):
-                    sucesses.add((vx_i, vy_i))
+                    successes.add((vx_i, vy_i))
                     best_hieghts[(vx_i, vy_i)] = max(height_record)
                     break
 
@@ -247,7 +241,7 @@ def try_trajectories(target_area):
                 vx_f, vy_f = adjust_velocity(vx_f, vy_f)
 
     k = max(best_hieghts, key=best_hieghts.get)
-    return best_hieghts[k], len(sucesses)
+    return best_hieghts[k], len(successes)
 
 
 if __name__ == "__main__":
