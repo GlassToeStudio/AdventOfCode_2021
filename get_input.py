@@ -7,8 +7,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from gts_colors.colors import (BLUE, BOLD, DEFAULT, GREEN, N_BOLD, RED, RESET,
-                               RGB_ORANGE, RGB_RED, UP_SAME, YELLOW)
+from gts_colors.colors import (BLUE, BOLD, GREEN, N_BOLD, RED, RESET,
+                               RGB_ORANGE, YELLOW)
 
 
 def get_args() -> argparse.Namespace:
@@ -36,6 +36,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument("-i", "--input", help="Create the input file.", action="store_true")  # noqa: E501
     parser.add_argument("-p", "--python", help="Create the python template.", action="store_true")  # noqa: E501
     parser.add_argument("-r", "--readme", help=f"Populate readme with tempalte data.{RESET}", action="store_true")  # noqa: E501
+    print(RESET)
     return parser.parse_args()
 
 

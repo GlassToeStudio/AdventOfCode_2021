@@ -97,10 +97,10 @@ import time
 from io import TextIOWrapper
 from os import system
 
-#                                                               # VIS: This is only for makeing an image!
+#                                                               # VIS: This is only for making an image!
 from gts_colors.colors import BLACK_BR, HOME, INV, N_SLOW_BLINK, RED, RESET
 
-#                                                               # VIS: This is only for makeing an image!
+#                                                               # VIS: This is only for making an image!
 NEW_LINE = "\n"
 TAB = "\t"
 SQUID = (" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"

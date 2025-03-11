@@ -445,3 +445,183 @@ Part 2 description
 
 </p>
 </details>
+
+
+
+<details>
+<summary><b>Day 18: Snailfish</b></summary>
+<p>
+Overall description
+
+```
+
+```
+
+### Part 1:
+Part 1 description
+
+### Part 2:
+Part 2 description
+
+</p>
+</details>
+
+
+
+<details>
+<summary><b>Day 19: Beacon Scanner</b></summary>
+<p>
+Overall description
+
+```
+
+```
+
+### Part 1:
+Part 1 description
+
+### Part 2:
+Part 2 description
+
+</p>
+</details>
+
+
+
+<details>
+<summary><b>Day 20: Trench Map</b></summary>
+<p>
+Overall description
+
+```
+
+```
+
+### Part 1:
+Part 1 description
+
+### Part 2:
+Part 2 description
+
+</p>
+</details>
+
+
+
+<details>
+<summary><b>JOIN US</b></summary>
+<p>
+Overall description
+
+```
+
+```
+
+### Part 1:
+Part 1 description
+
+### Part 2:
+Part 2 description
+
+</p>
+</details>
+
+
+
+<details>
+<summary><b>Day 22: Reactor Reboot</b></summary>
+<p>
+Overall description
+
+```
+
+```
+
+### Part 1:
+Part 1 description
+
+### Part 2:
+Part 2 description
+
+</p>
+</details>
+
+
+
+<details>
+<summary><b>Day 18: Snailfish</b></summary>
+<p>
+Overall description
+
+```
+
+```
+
+### Part 1:
+Part 1 description
+
+### Part 2:
+Part 2 description
+
+</p>
+</details>
+
+
+
+<details>
+<summary><b>Day 23: Amphipod</b></summary>
+<p>
+Overall description
+
+```
+
+```
+
+### Part 1:
+Part 1 description
+
+### Part 2:
+Part 2 description
+
+</p>
+</details>
+
+
+
+<details>
+<summary><b>Day 24: Arithmetic Logic Unit</b></summary>
+<p>
+Overall description
+
+```
+
+```
+
+### Part 1:
+Part 1 description
+
+### Part 2:
+Part 2 description
+
+</p>
+</details>
+
+
+
+<details>
+<summary><b>Day 25: Sea Cucumber</b></summary>
+<p>
+Overall description
+
+```
+
+```
+
+### Part 1:
+Part 1 description
+
+### Part 2:
+Part 2 description
+
+</p>
+</details>
